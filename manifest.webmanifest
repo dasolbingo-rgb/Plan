@@ -1,0 +1,10 @@
+{
+  "name": "다솔 창작 아카데미",
+  "short_name": "다솔 아카데미",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f1ea",
+  "theme_color": "#f5f1ea",
+  "lang": "ko",
+  "description": "다솔 전용 2년 창작 훈련 앱"
+}
