@@ -89,7 +89,7 @@ h1{font-size:28px;letter-spacing:-1.5px;margin:11px 0 5px}
 <section class="card date-panel" id="datePanel">
 <div class="label">원하는 날짜로 이동</div>
 <div class="date-row">
-<input id="dateInput" type="date" min="2026-09-23" max="2028-07-25">
+<input id="dateInput" type="date" min="2026-09-24" max="2028-07-26">
 <button class="jump" id="jumpBtn">보기</button>
 </div>
 <div class="week-list" id="weekList"></div>
@@ -149,7 +149,7 @@ function renderToday(date=todayISO()){
       <div class="kicker">오늘 공부 · W${String(x.week).padStart(2,"0")} DAY ${x.day}</div>
       <div class="today-date">${fmt(x.date)} · ${x.weekTitle}</div>
       <div class="mission-title">${x.title}</div>
-      <div class="meta">${x.meta.replace(x.date.split("-").join("."),"")}</div>
+      <div class="meta">${fmt(x.date)} · ${x.meta.split(" · ").slice(1).join(" · ")}</div>
       <div class="task">${x.task}</div>
       <div class="block"><div class="label">완료 기준</div><div class="deliver">${x.deliver}</div></div>
       <div class="block"><div class="label">☕ 틈새 미션</div><div class="micro">${x.micro}</div></div>
@@ -181,7 +181,7 @@ function renderWeeks(){
         <div class="day-mission"><div class="small-mission">
           <div class="kicker">W${String(x.week).padStart(2,"0")} · DAY ${x.day}</div>
           <div class="mission-title">${x.title}</div>
-          <div class="meta">${x.meta}</div>
+          <div class="meta">${fmt(x.date)} · ${x.meta.split(" · ").slice(1).join(" · ")}</div>
           <div class="task">${x.task}</div>
           <div class="block"><div class="label">완료 기준</div><div class="deliver">${x.deliver}</div></div>
           <div class="block"><div class="label">☕ 틈새 미션</div><div class="micro">${x.micro}</div></div>
