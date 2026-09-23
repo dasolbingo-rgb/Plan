@@ -1,10 +1,10 @@
 {
-  "name": "다솔 창작 아카데미",
-  "short_name": "다솔 아카데미",
+  "name": "Study Planner",
+  "short_name": "Study Planner",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f5f1ea",
   "theme_color": "#f5f1ea",
   "lang": "ko",
-  "description": "다솔 전용 2년 창작 훈련 앱"
+  "description": "Personal 2-year study planner"
 }
