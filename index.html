@@ -350,8 +350,9 @@ async function shareBackup(){try{const payload=await buildPayload();
  catch(e){if(e&&e.name!=="AbortError")toast("백업에 실패했어요")}}
 document.getElementById("backupShare").onclick=shareBackup;
 const NK="studyPlannerName";
-function applyName(){let n="";try{n=localStorage.getItem(NK)||""}catch(e){}const t=n?n+"의 스터디 플래너":"Study Planner";document.getElementById("appTitle").textContent=t+"";document.title=t}
-document.getElementById("nameBtn").onclick=()=>{const n=prompt("앱에 표시할 이름을 입력하세요 (비우면 기본 이름)");if(n===null)return;try{localStorage.setItem(NK,n.trim())}catch(e){}applyName()};
+function applyName(){let n="";try{n=localStorage.getItem(NK)||""}catch(e){}
+ const t=n.startsWith("full:")?n.slice(5):n?n+"의 스터디 플래너":"Study Planner";document.getElementById("appTitle").textContent=t;document.title=t;return t}
+document.getElementById("nameBtn").onclick=()=>{const cur=applyName(),n=prompt("앱 제목을 입력하세요 (비우면 기본 제목)",cur);if(n===null)return;try{localStorage.setItem(NK,n.trim()?"full:"+n.trim():"")}catch(e){}applyName();toast("제목을 바꿨어요")};
 applyName();
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 const NOTEK="studyPlannerNotes",LOGK="studyPlannerLog";
