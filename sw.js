@@ -1,52 +1,19 @@
-const CACHE = 'study-planner-v3-20260924';
-
-const STATIC = [
-  './manifest.webmanifest',
-  './icon-192.png',
-  './icon-512.png',
-  './apple-touch-icon.png'
-];
-
-self.addEventListener('install', event => {
+/* Study Planner 오프라인용: 인터넷이 되면 항상 최신 파일을 받고, 안 되면 마지막으로 받은 파일로 연다 */
+const CACHE = "study-planner-v1";
+self.addEventListener("install", e => {
   self.skipWaiting();
-
-  event.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(STATIC))
-  );
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(["./"]).catch(() => {})));
 });
-
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(key => key !== CACHE)
-          .map(key => caches.delete(key))
-      )
-    ).then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener('fetch', event => {
-  const request = event.request;
-
-  if (request.method !== 'GET') return;
-
-  if (
-    request.mode === 'navigate' ||
-    request.destination === 'document'
-  ) {
-    event.respondWith(
-      fetch(request, { cache: 'no-store' })
-        .then(response => response)
-        .catch(() => caches.match('./index.html'))
-    );
-    return;
-  }
-
-  event.respondWith(
-    caches.match(request).then(
-      cached => cached || fetch(request)
+self.addEventListener("activate", e => e.waitUntil(self.clients.claim()));
+self.addEventListener("fetch", e => {
+  const r = e.request;
+  if (r.method !== "GET" || new URL(r.url).origin !== location.origin) return;
+  e.respondWith(
+    fetch(r).then(res => {
+      if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(r, copy)); }
+      return res;
+    }).catch(() =>
+      caches.match(r, { ignoreSearch: true }).then(m => m || (r.mode === "navigate" ? caches.match("./") : undefined))
     )
   );
 });
