@@ -471,9 +471,12 @@ days:[
 ];
 
 function fill(s,p){
-return s.replace(/\{c\}/g,p.c).replace(/\{s\}/g,p.s).replace(/\{emotion\}/g,p.emotion)
+return String(s).replace(/\{c\}/g,p.c).replace(/\{s\}/g,p.s).replace(/\{emotion\}/g,p.emotion)
 .replace(/\{prop\}/g,p.prop).replace(/\{outfit\}/g,p.outfit).replace(/\{support\}/g,p.support)
 .replace(/\{scene\}/g,p.scene).replace(/\{hook\}/g,p.hook);
+}
+function fillAny(v,p){
+return Array.isArray(v) ? v.map(x=>fill(x,p)).join(" · ") : fill(v,p);
 }
 
 function dateAdd(iso,n){
@@ -498,7 +501,7 @@ semesterTitle:`${Math.floor((week-1)/12)+1}학기 · ${["캐릭터와 장면","�
 day:di+1,date,dateShort:dateShort(date),
 title,dayTitle:title,
 meta:`${date} · ${di===5? "3~6시간" : di===6 ? "1~3시간" : di===0 ? "1~3시간" : "2~4시간"}`,
-taskSteps,deliver:fill(d[2],p),micro:fill(d[3],p),
+taskSteps,deliver:fillAny(d[2],p),micro:fillAny(d[3],p),
 projectIndex:pi,phaseIndex:wi
 });
 id++;
