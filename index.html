@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Study Planner">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<title>Study Planner · 2026.09.24 v3</title>
+<title>Study Planner · 2026.09.24 v4</title>
 <style>
 :root{--bg:#f5f1ea;--card:#fffdf9;--line:#e1d9cf;--text:#292723;--muted:#827970;--soft:#eee7de;--accent:#3e352f}
 *{box-sizing:border-box}
@@ -30,6 +30,10 @@ h1{font-size:28px;letter-spacing:-1.5px;margin:11px 0 5px}.sub{font-size:13px;co
 .day-mission{padding:0 2px 10px}.small-mission{background:#fff;border:1px solid #e3dbd2;border-radius:12px;padding:13px}.small-mission .mission-title{font-size:17px}.small-mission .task{font-size:13px}
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#292723;color:white;padding:10px 14px;border-radius:99px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;z-index:30}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(max-width:480px){h1{font-size:25px}.mission-title{font-size:20px}}
+
+/* 기록 기능 */
+.action-row{display:flex;gap:8px;margin-top:13px;flex-wrap:wrap}.action-btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px;font-weight:800;color:var(--text);font-size:12px}.action-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}.record-count{font-size:11px;color:var(--muted);margin-left:3px}.modal-backdrop{position:fixed;inset:0;background:#201b18aa;display:none;align-items:flex-end;justify-content:center;padding:12px;z-index:50}.modal-backdrop.open{display:flex}.modal{width:min(720px,100%);max-height:88vh;overflow:auto;background:var(--card);border-radius:22px;padding:18px;box-shadow:0 20px 60px #0003}.modal-head{display:flex;align-items:flex-start;gap:10px}.modal-head>div:first-child{flex:1}.modal-title{font-size:19px;font-weight:900;line-height:1.35}.modal-sub{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}.close-btn{border:0;background:var(--soft);width:36px;height:36px;border-radius:50%;font-size:22px;line-height:1}.prompt-box{background:var(--soft);border-radius:13px;padding:12px;margin-top:14px;font-size:13px;line-height:1.7}.prompt-box b{display:block;font-size:11px;color:var(--muted);margin-bottom:5px}.writing-area{width:100%;min-height:280px;margin-top:10px;border:1px solid var(--line);border-radius:13px;padding:13px;background:#fffdf9;color:var(--text);font:inherit;font-size:14px;line-height:1.75;resize:vertical}.modal-actions{display:flex;gap:8px;margin-top:10px}.modal-actions button{flex:1}.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.photo-item{position:relative;aspect-ratio:1;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--soft)}.photo-item img{width:100%;height:100%;object-fit:cover}.photo-del{position:absolute;right:5px;top:5px;border:0;background:#292723dd;color:#fff;width:28px;height:28px;border-radius:50%;font-size:16px}.upload-label{display:block;border:1px dashed #bfb4a8;border-radius:13px;padding:16px;text-align:center;font-weight:800;font-size:12px;color:var(--muted);cursor:pointer;margin-top:12px}.upload-label input{display:none}.backup-row{display:flex;gap:8px;margin-top:12px}.backup-row button{flex:1}.hint{font-size:11px;color:var(--muted);line-height:1.55;margin-top:9px}
+@media(max-width:480px){.modal-backdrop{padding:0}.modal{border-radius:22px 22px 0 0;max-height:92vh}.photo-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -43,6 +47,7 @@ h1{font-size:28px;letter-spacing:-1.5px;margin:11px 0 5px}.sub{font-size:13px;co
 <div class="navgrid">
 <button class="navbtn" id="todayBtn">✏️ 오늘 공부</button>
 <button class="navbtn" id="dateBtn">🗓 날짜 선택</button>
+<button class="navbtn" id="backupBtn">💾 기록 백업</button>
 </div>
 </div>
 <main id="main"></main>
@@ -54,6 +59,27 @@ h1{font-size:28px;letter-spacing:-1.5px;margin:11px 0 5px}.sub{font-size:13px;co
 </div>
 <div class="week-list" id="weekList"></div>
 </section>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <section class="modal" id="writingModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head"><div><div class="modal-title" id="modalTitle">✍️ 글쓰기</div><div class="modal-sub" id="modalSub"></div></div><button class="close-btn" id="modalClose" aria-label="닫기">×</button></div>
+    <div class="prompt-box" id="writingPrompt"></div>
+    <textarea class="writing-area" id="writingArea" placeholder="여기에 바로 써보세요."></textarea>
+    <div class="modal-actions"><button class="action-btn primary" id="writingSave">저장하기</button><button class="action-btn" id="writingCancel">닫기</button></div>
+  </section>
+  <section class="modal" id="photoModal" role="dialog" aria-modal="true" aria-labelledby="photoTitle" style="display:none">
+    <div class="modal-head"><div><div class="modal-title" id="photoTitle">🎨 그림 기록</div><div class="modal-sub" id="photoSub"></div></div><button class="close-btn" id="photoClose" aria-label="닫기">×</button></div>
+    <label class="upload-label">📷 사진 추가하기<input type="file" id="photoInput" accept="image/*" multiple></label>
+    <div class="photo-grid" id="photoGrid"></div>
+    <div class="hint">사진은 기기 안에 저장됩니다. 오래 모을수록 백업 파일을 만들어 두는 것을 권장합니다.</div>
+  </section>
+  <section class="modal" id="backupModal" role="dialog" aria-modal="true" aria-labelledby="backupTitle" style="display:none">
+    <div class="modal-head"><div><div class="modal-title" id="backupTitle">💾 기록 백업</div><div class="modal-sub">완료 체크, 글쓰기, 그림 사진을 한 번에 백업하거나 복원합니다.</div></div><button class="close-btn" id="backupClose" aria-label="닫기">×</button></div>
+    <div class="backup-row"><button class="action-btn primary" id="backupExport">백업 파일 만들기</button><button class="action-btn" id="backupImportBtn">복원하기</button></div>
+    <input type="file" id="backupInput" accept="application/json" style="display:none">
+    <div class="hint">복원하면 현재 기록을 백업 파일의 기록으로 덮어씁니다. 사진까지 포함됩니다.</div>
+  </section>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -511,56 +537,60 @@ id++;
 return arr;
 }
 const MISSIONS=buildMissions();
-const KEY="studyPlannerDone";
-let done={}; try{done=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){done={}}
-function saveDone(){try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}}
+const KEY="studyPlannerDone", WRITE_KEY="studyPlannerWriting";
+let done={}, writing={};
+try{done=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){done={}}
+try{writing=JSON.parse(localStorage.getItem(WRITE_KEY)||"{}")||{}}catch(e){writing={}}
+function saveDone(){try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){toast("저장 공간이 부족해요")}}
+function saveWriting(){try{localStorage.setItem(WRITE_KEY,JSON.stringify(writing))}catch(e){toast("글 저장 공간이 부족해요")}}
+const DB_NAME="studyPlannerDB",DB_VERSION=1,STORE="images";
+function openDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB_NAME,DB_VERSION);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(STORE))r.result.createObjectStore(STORE)};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+async function idbPut(key,value){const db=await openDB();return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,"readwrite");tx.objectStore(STORE).put(value,key);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error)})}
+async function idbGet(key){const db=await openDB();return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,"readonly");const r=tx.objectStore(STORE).get(key);r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error)})}
+async function idbDelete(key){const db=await openDB();return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,"readwrite");tx.objectStore(STORE).delete(key);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error)})}
 const $=id=>document.getElementById(id), main=$("main"), datePanel=$("datePanel"), dateInput=$("dateInput"), weekList=$("weekList"), toastEl=$("toast");
-const todayBtn=$("todayBtn"),dateBtn=$("dateBtn"),jumpBtn=$("jumpBtn");
+const todayBtn=$("todayBtn"),dateBtn=$("dateBtn"),jumpBtn=$("jumpBtn"),backupBtn=$("backupBtn"),backdrop=$("modalBackdrop");
 const todayISO=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
 const clampDate=d=>d<START?START:d>END?END:d;
 const byDate=d=>MISSIONS.find(x=>x.date===d)||MISSIONS[0];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 function toast(t){toastEl.textContent=t;toastEl.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>toastEl.classList.remove("show"),1300)}
+function isWritingTask(s){return /(쓴다|작성|대화|문장|문장을|말투|독백|원고|설명한다|설명하|적는다|적고|정한다|고른다|고르다|원한다|원하는|생각을|이유를|감정이 바뀌|감각|소리|냄새)/.test(s)}
+function writingPrompts(x){return x.taskSteps.filter(isWritingTask)}
+function hasWriting(x){return writingPrompts(x).length>0}
+function writingKey(x){return String(x.id)}
 function renderToday(date=todayISO()){
-const x=byDate(clampDate(date)),weekDone=MISSIONS.filter(m=>m.week===x.week&&done[m.id]).length,totalDone=MISSIONS.filter(m=>done[m.id]).length;
-const steps=x.taskSteps.map(v=>`<li>${esc(v)}</li>`).join("");
-main.innerHTML=`<section class="card today-card">
-<div class="kicker">W${String(x.week).padStart(2,"0")} · DAY ${x.day} · ${esc(x.semesterTitle)}</div>
-<div class="today-date">${fmt(x.date)}</div>
-<div class="project-label">프로젝트 · ${esc(x.weekTitle)}</div>
-<div class="mission-title">${esc(x.dayTitle)}</div>
-<div class="meta">${esc(x.meta)}</div>
-<div class="block"><div class="label">오늘 할 일</div><div class="task"><ol class="task-list">${steps}</ol></div></div>
-<div class="block"><div class="label">완료 기준</div><div class="deliver">${esc(x.deliver)}</div></div>
-<div class="block"><div class="label">☕ 틈새 미션</div><div class="micro">${esc(x.micro)}</div></div>
-<label class="checkrow"><input type="checkbox" id="check" ${done[x.id]?"checked":""}> 미션 완료</label>
-<div class="progress-wrap">
-<div class="progress-head"><span>이번 주</span><b>${weekDone} / 7</b></div><div class="progress"><span style="width:${pct(weekDone,7)}%"></span></div>
-<div class="progress-head" style="margin-top:10px"><span>2년 전체</span><b>${totalDone} / 672 · ${pct(totalDone,672)}%</b></div><div class="progress"><span style="width:${pct(totalDone,672)}%"></span></div>
-</div></section>`;
-$("check").onchange=e=>{done[x.id]=e.target.checked;saveDone();renderToday(x.date);toast(e.target.checked?"완료했어요 ✓":"완료를 취소했어요")};
+ const x=byDate(clampDate(date)),weekDone=MISSIONS.filter(m=>m.week===x.week&&done[m.id]).length,totalDone=MISSIONS.filter(m=>done[m.id]).length;
+ const prompts=writingPrompts(x),promptHtml=prompts.length?`<div class="action-row"><button class="action-btn primary" data-write="${x.id}">✍️ 글쓰기 미션 열기</button><button class="action-btn" data-photo="${x.id}">🎨 그림 기록</button></div>`:`<div class="action-row"><button class="action-btn" data-photo="${x.id}">🎨 그림 기록</button></div>`;
+ const steps=x.taskSteps.map(v=>`<li>${esc(v)}</li>`).join("");
+ main.innerHTML=`<section class="card today-card"><div class="kicker">W${String(x.week).padStart(2,"0")} · DAY ${x.day} · ${esc(x.semesterTitle)}</div><div class="today-date">${fmt(x.date)}</div><div class="project-label">프로젝트 · ${esc(x.weekTitle)}</div><div class="mission-title">${esc(x.dayTitle)}</div><div class="meta">${esc(x.meta)}</div><div class="block"><div class="label">오늘 할 일</div><div class="task"><ol class="task-list">${steps}</ol></div>${promptHtml}</div><div class="block"><div class="label">완료 기준</div><div class="deliver">${esc(x.deliver)}</div></div><div class="block"><div class="label">☕ 틈새 미션</div><div class="micro">${esc(x.micro)}</div></div><label class="checkrow"><input type="checkbox" id="check" ${done[x.id]?"checked":""}> 미션 완료</label><div class="progress-wrap"><div class="progress-head"><span>이번 주</span><b>${weekDone} / 7</b></div><div class="progress"><span style="width:${pct(weekDone,7)}%"></span></div><div class="progress-head" style="margin-top:10px"><span>2년 전체</span><b>${totalDone} / 672 · ${pct(totalDone,672)}%</b></div><div class="progress"><span style="width:${pct(totalDone,672)}%"></span></div></div></section>`;
+ $("check").onchange=e=>{done[x.id]=e.target.checked;saveDone();renderToday(x.date);toast(e.target.checked?"완료했어요 ✓":"완료를 취소했어요")};
+ main.querySelectorAll("[data-write]").forEach(b=>b.onclick=()=>openWriting(x));main.querySelectorAll("[data-photo]").forEach(b=>b.onclick=()=>openPhotos(x));
 }
 function renderWeeks(selectedDate){
-const weeks=[...new Set(MISSIONS.map(m=>m.week))];
-weekList.innerHTML=weeks.map(w=>{
-const arr=MISSIONS.filter(m=>m.week===w),open=arr.some(m=>m.date===selectedDate);
-return `<details class="week" ${open?"open":""}><summary>W${String(w).padStart(2,"0")} · ${esc(arr[0].weekTitle)} <span style="color:var(--muted);font-size:11px">${esc(arr[0].semesterTitle)}</span></summary><div class="days">
-${arr.map(x=>{
-const steps=x.taskSteps.map(v=>`<li>${esc(v)}</li>`).join("");
-return `<details class="day" ${x.date===selectedDate?"open":""}><summary><em>DAY ${x.day}</em>${x.dateShort}<b>${done[x.id]?"완료":"미완료"}</b></summary>
-<div class="day-mission"><div class="small-mission"><div class="project-label">프로젝트 · ${esc(x.weekTitle)}</div><div class="mission-title">${esc(x.dayTitle)}</div><div class="meta">${esc(x.meta)}</div>
-<div class="block"><div class="label">오늘 할 일</div><div class="task"><ol class="task-list">${steps}</ol></div></div>
-<div class="block"><div class="label">완료 기준</div><div class="deliver">${esc(x.deliver)}</div></div>
-<div class="block"><div class="label">☕ 틈새 미션</div><div class="micro">${esc(x.micro)}</div></div>
-</div></div></details>`;
-}).join("")}</div></details>`;
-}).join("");
+ const weeks=[...new Set(MISSIONS.map(m=>m.week))];
+ weekList.innerHTML=weeks.map(w=>{const arr=MISSIONS.filter(m=>m.week===w),open=arr.some(m=>m.date===selectedDate);return `<details class="week" ${open?"open":""}><summary>W${String(w).padStart(2,"0")} · ${esc(arr[0].weekTitle)} <span style="color:var(--muted);font-size:11px">${esc(arr[0].semesterTitle)}</span></summary><div class="days">${arr.map(x=>{const steps=x.taskSteps.map(v=>`<li>${esc(v)}</li>`).join("");const btns=`<div class="action-row"><button class="action-btn" data-write="${x.id}" ${hasWriting(x)?"":"style=\"display:none\""}>✍️ 글쓰기</button><button class="action-btn" data-photo="${x.id}">🎨 그림 기록</button></div>`;return `<details class="day" ${x.date===selectedDate?"open":""}><summary><em>DAY ${x.day}</em>${x.dateShort}<b>${done[x.id]?"완료":"미완료"}</b></summary><div class="day-mission"><div class="small-mission"><div class="project-label">프로젝트 · ${esc(x.weekTitle)}</div><div class="mission-title">${esc(x.dayTitle)}</div><div class="meta">${esc(x.meta)}</div><div class="block"><div class="label">오늘 할 일</div><div class="task"><ol class="task-list">${steps}</ol></div>${btns}</div><div class="block"><div class="label">완료 기준</div><div class="deliver">${esc(x.deliver)}</div></div><div class="block"><div class="label">☕ 틈새 미션</div><div class="micro">${esc(x.micro)}</div></div></div></div></details>`}).join("")}</div></details>`}).join("");
+ weekList.querySelectorAll("[data-write]").forEach(b=>{if(b.style.display!=="none")b.onclick=()=>openWriting(byDate(MISSIONS[Number(b.dataset.write)].date))});weekList.querySelectorAll("[data-photo]").forEach(b=>b.onclick=()=>openPhotos(byDate(MISSIONS[Number(b.dataset.photo)].date)));
 }
+function openWriting(x){const prompts=writingPrompts(x);if(!prompts.length)return;document.getElementById("writingModal").style.display="block";document.getElementById("photoModal").style.display="none";document.getElementById("backupModal").style.display="none";backdrop.classList.add("open");document.getElementById("modalTitle").textContent="✍️ 글쓰기 미션";document.getElementById("modalSub").textContent=`W${String(x.week).padStart(2,"0")} DAY ${x.day} · ${fmt(x.date)} · ${x.dayTitle}`;document.getElementById("writingPrompt").innerHTML='<b>이번 미션에서 쓸 내용</b>'+prompts.map((p,i)=>`${i+1}. ${esc(p)}`).join('<br>');document.getElementById("writingArea").value=writing[writingKey(x)]||"";document.getElementById("writingSave").onclick=()=>{writing[writingKey(x)]=document.getElementById("writingArea").value;saveWriting();closeModal();toast("글을 저장했어요 ✓")};setTimeout(()=>document.getElementById("writingArea").focus(),100)}
+async function openPhotos(x){document.getElementById("writingModal").style.display="none";document.getElementById("backupModal").style.display="none";document.getElementById("photoModal").style.display="block";backdrop.classList.add("open");document.getElementById("photoSub").textContent=`W${String(x.week).padStart(2,"0")} DAY ${x.day} · ${fmt(x.date)} · ${x.dayTitle}`;backdrop.dataset.photoMission=x.id;await renderPhotos(x)}
+async function renderPhotos(x){const grid=document.getElementById("photoGrid"),items=await idbGet(String(x.id));grid.innerHTML=items.map((it,i)=>`<div class="photo-item"><img src="${it.data}" alt="그림 기록 ${i+1}"><button class="photo-del" data-del="${i}">×</button></div>`).join("");grid.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{const a=await idbGet(String(x.id));a.splice(Number(b.dataset.del),1);await idbPut(String(x.id),a);await renderPhotos(x);toast("사진을 삭제했어요")})}
+async function compressImage(file){return new Promise((resolve,reject)=>{const fr=new FileReader();fr.onload=()=>{const img=new Image();img.onload=()=>{const max=1400,scale=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));const ctx=c.getContext("2d");ctx.drawImage(img,0,0,c.width,c.height);resolve({data:c.toDataURL("image/jpeg",.78),name:file.name})};img.onerror=reject;img.src=fr.result};fr.onerror=reject;fr.readAsDataURL(file)})}
+document.getElementById("photoInput").onchange=async e=>{const id=backdrop.dataset.photoMission;if(!id)return;try{const old=await idbGet(id);for(const f of [...e.target.files])old.push(await compressImage(f));await idbPut(id,old);const x=MISSIONS.find(m=>String(m.id)===String(id));await renderPhotos(x);toast("사진을 저장했어요 ✓")}catch(err){toast("사진 저장에 실패했어요") }e.target.value=""};
+function closeModal(){backdrop.classList.remove("open");document.getElementById("writingModal").style.display="none";document.getElementById("photoModal").style.display="none";document.getElementById("backupModal").style.display="none"}
+["modalClose","writingCancel","photoClose","backupClose"].forEach(id=>document.getElementById(id).onclick=closeModal);backdrop.onclick=e=>{if(e.target===backdrop)closeModal()};
+async function allImages(){const db=await openDB();return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,"readonly"),store=tx.objectStore(STORE),r=store.openCursor(),out={};r.onsuccess=e=>{const c=e.target.result;if(c){out[c.key]=c.value;c.continue()}else resolve(out)};r.onerror=()=>reject(r.error)})}
+function dataUrlToBlob(data){const [head,b64]=data.split(",");const bin=atob(b64),arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:(head.match(/:(.*?);/)||[])[1]||"image/jpeg"})}
+async function exportBackup(){const payload={version:1,createdAt:new Date().toISOString(),done,writing,images:await allImages()};const blob=new Blob([JSON.stringify(payload)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`StudyPlanner_backup_${todayISO()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("백업 파일을 만들었어요 ✓")}
+async function importBackup(file){const payload=JSON.parse(await file.text());if(!payload||!payload.done||!payload.writing)throw new Error("invalid");done=payload.done;writing=payload.writing;saveDone();saveWriting();const db=await openDB();await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,"readwrite"),st=tx.objectStore(STORE);st.clear();for(const [k,v] of Object.entries(payload.images||{}))st.put(v,k);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});closeModal();renderToday(todayISO());toast("백업을 복원했어요 ✓")}
+document.getElementById("backupExport").onclick=exportBackup;document.getElementById("backupImportBtn").onclick=()=>document.getElementById("backupInput").click();document.getElementById("backupInput").onchange=async e=>{if(!e.target.files[0])return;try{if(confirm("현재 기록을 백업 파일의 기록으로 바꿀까요?"))await importBackup(e.target.files[0])}catch(err){toast("백업 파일을 읽지 못했어요")}e.target.value=""};
+function openBackup(){document.getElementById("writingModal").style.display="none";document.getElementById("photoModal").style.display="none";document.getElementById("backupModal").style.display="block";backdrop.classList.add("open")}
 todayBtn.onclick=()=>{renderToday(todayISO());datePanel.classList.remove("open");scrollTo({top:0,behavior:"smooth"})};
 dateBtn.onclick=()=>{datePanel.classList.toggle("open");if(datePanel.classList.contains("open")){dateInput.value=clampDate(todayISO());renderWeeks(dateInput.value)}};
 jumpBtn.onclick=()=>{const d=clampDate(dateInput.value||todayISO());renderToday(d);renderWeeks(d);scrollTo({top:0,behavior:"smooth"})};
 dateInput.onchange=()=>renderWeeks(clampDate(dateInput.value));
+backupBtn.onclick=openBackup;
 renderToday(todayISO());
 </script>
 </body>
