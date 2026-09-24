@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f5f1ea">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Study Planner">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -41,8 +43,9 @@ h1{font-size:28px;letter-spacing:-1.5px;margin:11px 0 5px}.sub{font-size:13px;co
 <div class="app">
 <header>
 <span class="badge">2년 · 8학기 · 96주 · 671일</span>
-<h1>Study Planner 🎨📖</h1>
+<h1 id="appTitle">Study Planner 🎨📖</h1>
 <div class="sub">그림과 웹소설을 함께 훈련하는 2년 실전형 스터디 플래너</div>
+<button class="action-btn" id="nameBtn" style="margin-top:8px;font-size:11px">✎ 내 이름으로 꾸미기</button>
 </header>
 <div class="navbar">
 <div class="navgrid">
@@ -74,11 +77,11 @@ h1{font-size:28px;letter-spacing:-1.5px;margin:11px 0 5px}.sub{font-size:13px;co
     <div class="modal-head"><div><div class="modal-title" id="photoTitle">🎨 그림 기록</div><div class="modal-sub" id="photoSub"></div></div><button class="close-btn" id="photoClose" aria-label="닫기">×</button></div>
     <label class="upload-label">📷 사진 추가하기<input type="file" id="photoInput" accept="image/*" multiple></label>
     <div class="photo-grid" id="photoGrid"></div>
-    <div class="hint">사진은 기기 안에 저장됩니다. 오래 모을수록 백업 파일을 만들어 두는 것을 권장합니다.</div>
+    <div class="hint">사진은 이 기기에 저장돼요. 가끔 💾 백업을 해두면 폰을 바꿔도 이어갈 수 있어요.</div>
   </section>
   <section class="modal" id="backupModal" role="dialog" aria-modal="true" aria-labelledby="backupTitle" style="display:none">
     <div class="modal-head"><div><div class="modal-title" id="backupTitle">💾 기록 백업</div><div class="modal-sub">완료 체크, 글쓰기, 그림 사진을 한 번에 백업하거나 복원합니다.</div></div><button class="close-btn" id="backupClose" aria-label="닫기">×</button></div>
-    <div class="backup-row"><button class="action-btn primary" id="backupExport">백업 파일 만들기</button><button class="action-btn" id="backupImportBtn">복원하기</button></div>
+    <div class="backup-row"><button class="action-btn primary" id="backupExport">백업 파일 만들기</button><button class="action-btn" id="backupShare">☁️ 파일 앱에 저장</button><button class="action-btn" id="backupImportBtn">복원하기</button></div>
     <input type="file" id="backupInput" accept="application/json" style="display:none">
     <div class="hint">복원하면 현재 기록을 백업 파일의 기록으로 덮어씁니다. 사진까지 포함됩니다.</div>
   </section>
@@ -283,7 +286,7 @@ const LBK="studyPlannerLastBackup";
 function extraCards(d){const x=byDate(clampDate(d));let h="";
  const tot=MISSIONS.filter(m=>m.id!==0&&done[m.id]).length;let last=null;try{last=localStorage.getItem(LBK)}catch(e){}
  const gap=Math.round((new Date(todayISO()+"T12:00:00")-new Date((last||START)+"T12:00:00"))/864e5);
- if(tot>=7&&gap>=14)h+=`<div class="card" style="padding:12px 15px;font-size:12px;color:#756c63">${last?`마지막 백업이 ${gap}일 전이에요.`:"아직 백업한 적이 없어요."} 글과 그림 사진은 이 기기에만 저장돼요. 위의 💾 기록 백업에서 파일을 만들어 두세요.</div>`;
+ if(tot>=14&&gap>=30)h+=`<div class="card" style="padding:12px 15px;font-size:12px;color:#756c63">${last?`마지막 백업이 ${gap}일 전이에요.`:"아직 백업한 적이 없어요."} 위의 💾 기록 백업에서 “파일 앱에 저장”을 한 번 눌러두면 돼요.</div>`;
  if(done[x.id])h+=`<div class="action-row"><button class="action-btn primary" id="nextBtn">다음 미션 →</button></div>`;
  if(h){main.insertAdjacentHTML("beforeend",h);const b=document.getElementById("nextBtn");if(b)b.onclick=()=>{renderToday(nextMission().date);scrollTo({top:0,behavior:"smooth"})}}}
 const _rt2=renderToday;renderToday=function(d){_rt2(d);extraCards(d)};
@@ -292,6 +295,16 @@ document.getElementById("backupExport").onclick=exportBackup;
 const wa=document.getElementById("writingArea"),ccEl=document.getElementById("charCount");
 const cc=()=>{ccEl.textContent=wa.value.length.toLocaleString()+"자 (공백 포함)"};
 wa.addEventListener("input",cc);const _ow=openWriting;openWriting=function(x){_ow(x);cc()};
+async function shareBackup(){try{const payload={version:1,createdAt:new Date().toISOString(),done,writing,images:await allImages()};
+ const file=new File([JSON.stringify(payload)],`StudyPlanner_backup_${todayISO()}.json`,{type:"application/json"});
+ if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file]});try{localStorage.setItem(LBK,todayISO())}catch(e){}toast("백업을 저장했어요 ✓")}else{await exportBackup()}}
+ catch(e){if(e&&e.name!=="AbortError")toast("백업에 실패했어요")}}
+document.getElementById("backupShare").onclick=shareBackup;
+const NK="studyPlannerName";
+function applyName(){let n="";try{n=localStorage.getItem(NK)||""}catch(e){}const t=n?n+"의 스터디 플래너":"Study Planner";document.getElementById("appTitle").textContent=t+" 🎨📖";document.title=t}
+document.getElementById("nameBtn").onclick=()=>{const n=prompt("앱에 표시할 이름을 입력하세요 (비우면 기본 이름)");if(n===null)return;try{localStorage.setItem(NK,n.trim())}catch(e){}applyName()};
+applyName();
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 heavyUI();
 renderToday(nextMission().date);
 </script>
