@@ -40,7 +40,7 @@ h1{font-size:28px;letter-spacing:-1.5px;margin:11px 0 5px}.sub{font-size:13px;co
 <body>
 <div class="app">
 <header>
-<span class="badge">2년 · 8학기 · 96주 · 672일</span>
+<span class="badge">2년 · 8학기 · 96주 · 671일</span>
 <h1>Study Planner 🎨📖</h1>
 <div class="sub">그림과 웹소설을 함께 훈련하는 2년 실전형 스터디 플래너</div>
 </header>
@@ -55,7 +55,7 @@ h1{font-size:28px;letter-spacing:-1.5px;margin:11px 0 5px}.sub{font-size:13px;co
 <section class="card date-panel" id="datePanel">
 <div class="label">원하는 날짜로 이동</div>
 <div class="date-row">
-<input id="dateInput" type="date" min="2026-09-24" max="2028-07-26">
+<input id="dateInput" type="date" min="2026-09-24" max="2028-07-25">
 <button class="jump" id="jumpBtn">보기</button>
 </div>
 <div class="week-list" id="weekList"></div>
@@ -67,6 +67,7 @@ h1{font-size:28px;letter-spacing:-1.5px;margin:11px 0 5px}.sub{font-size:13px;co
     <div class="modal-head"><div><div class="modal-title" id="modalTitle">✍️ 글쓰기</div><div class="modal-sub" id="modalSub"></div></div><button class="close-btn" id="modalClose" aria-label="닫기">×</button></div>
     <div class="prompt-box" id="writingPrompt"></div>
     <textarea class="writing-area" id="writingArea" placeholder="여기에 바로 써보세요."></textarea>
+    <div class="hint" id="charCount"></div>
     <div class="modal-actions"><button class="action-btn primary" id="writingSave">저장하기</button><button class="action-btn" id="writingCancel">닫기</button></div>
   </section>
   <section class="modal" id="photoModal" role="dialog" aria-modal="true" aria-labelledby="photoTitle" style="display:none">
@@ -85,7 +86,7 @@ h1{font-size:28px;letter-spacing:-1.5px;margin:11px 0 5px}.sub{font-size:13px;co
 <div class="toast" id="toast"></div>
 
 <script>
-const START="2026-09-24", END="2028-07-26";
+const START="2026-09-24", END="2028-07-25", ANCHOR="2026-09-23";
 
 /*
   설계 원칙
@@ -126,6 +127,8 @@ const PROJECTS=[
 {"title":"최종 포트폴리오 프로젝트","scene":"최종 창작 세계","c":"최종 창작 캐릭터","emotion":"가장 그리고 싶은 감정","prop":"가장 중요한 상징 소품","outfit":"최종 대표 의상","support":"상대역 또는 생물","story":"2년 동안 배운 내용을 하나의 완성된 창작 장면으로 묶는 프로젝트","arcs":["세계와 캐릭터의 첫 설계","이야기의 핵심 사건 설계","최종 장면 제작","포트폴리오용 최종 작품과 원고 완성"]}
 ];
 
+const SK=[["제스처와 인체 비율", "인물 소개와 감정 묘사"], ["재질과 명암(젖은 금속·천)", "분위기 묘사와 침묵의 대사"], ["원근과 깊이(안개 숲)", "시점과 긴장 조절"], ["의상 디자인과 실루엣", "인물의 동기(왜 그렇게 하는가)"], ["동세와 이펙트", "행동 묘사와 속도감"], ["두 인물 구도와 시선", "서브텍스트 대사"], ["달리는 포즈와 단축법", "절박함 쌓기"], ["감정이 담긴 손과 자세", "내면 독백과 감정 변화"], ["크기 대비와 생물 형태", "관찰 묘사와 관계의 시작"], ["동물 형태와 시선 연출", "말 없는 서사"], ["스케일과 원근 배치", "군중 반응 묘사"], ["색 팔레트와 젖은 표현", "낯선 존재의 첫인상"], ["공간 배치와 조명", "복선과 작은 이상 징후"], ["복잡한 배경 단순화", "다인원 장면 정리"], ["다인 구도와 시선 유도", "시선 이동과 장면 전환"], ["분위기 조명과 색", "미스터리와 정보 배분"], ["좁은 공간 구도", "불신과 협력의 대사 밀당"], ["표정 연기와 거리감", "재회 장면의 감정 절제"], ["군중·의상 통일감", "장면의 중심 만들기"], ["인물별 실루엣 구분", "군상극과 병렬 서술"], ["빛·연기·색 대비", "위기 장면의 문장 호흡"], ["캐릭터 디자인 종합", "캐릭터 설정서와 첫 등장"], ["삽화 구도와 표지 비율", "회차 구성과 다음 화 훅"], ["렌더링과 색보정 마감", "퇴고와 원고 마감"]];
+PROJECTS.forEach((p,i)=>{p.skillDraw=SK[i][0];p.skillWrite=SK[i][1]});
 const CURRICULUM=PROJECTS.map((p,pi)=>({
   ...p,
   weeks:p.arcs.map((arc,wi)=>({
@@ -138,12 +141,18 @@ const CURRICULUM=PROJECTS.map((p,pi)=>({
         ["{c}가 {arc}에서 망설이는 이유를 5문장 안으로 쓴다. 말하지 않고 망설이는 모습을 전신으로 그린다.","{c}가 결국 결심하는 순간의 대사를 4~6줄로 쓴다. 결심 전과 후의 자세를 나란히 그린다.","{c}와 {support}가 처음으로 충돌하는 장면을 쓴다. 몸의 방향과 시선이 부딪히는 전신 구도를 3개 그린다.","예상과 전혀 다른 행동을 하는 인물을 정한다. 그 행동이 드러나는 장면을 글 200자 안팎과 함께 그린다.","{c}의 감정이 반대로 바뀌는 순간을 8~12줄로 쓴다. 표정만이 아니라 손과 몸의 자세가 변하도록 그린다.","{c}가 반드시 하나를 선택해야 하는 순간을 만든다. 선택지 두 개를 각각 짧게 쓰고, 실제 장면은 하나만 그린다.","이번 주의 감정 전환이 한눈에 보이는 장면을 완성한다. 그림에 들어갈 핵심 대사 2줄도 함께 정한다."],
         ["최종 장면 직전에 무슨 일이 있었는지 300자 안팎으로 쓴다. 그 직전 장면을 작은 러프로 그린다.","최종 장면에서 가장 먼저 보이게 할 인물을 정하고, {scene} 안에 인물과 배경을 배치한 구도 러프 4장을 만든다.","최종 장면의 시간대와 빛을 정한다. 같은 구도를 빛만 바꿔 3장 그린 뒤 하나를 선택한다.","{c}와 {support}의 관계가 가장 잘 보이는 순간을 선택한다. 두 사람의 거리와 시선이 읽히는 장면을 그린다.","{prop}과 {outfit}의 디테일을 최종 장면에 맞게 정리한다. 실제 장면 안에서 자연스럽게 보이도록 다시 그린다.","지금까지 만든 설정을 모두 사용해 {arc}의 최종 일러스트를 완성한다. 글을 읽지 않아도 사건이 보이게 구성한다.","완성 그림의 장면을 웹소설 원고처럼 700~1200자로 쓴다. 대사와 행동을 한 덩어리의 장면으로 구성하고, 그림과 맞지 않는 부분을 마지막에 수정한다."]
       ];
-      return base[wi].map((text,i)=>({title:names[i],task:text,deliver:"오늘 만든 글과 그림 결과물 1세트",micro:["10분: 같은 상황을 더 가까운 거리에서 그린다.","10분: 인물의 시선 방향만 바꾼 장면을 그린다.","10분: 같은 대사를 다른 표정으로 표현한 상반신을 그린다.","10분: 소품을 중심으로 장면을 작게 그린다.","10분: 두 인물의 거리를 바꿔 관계가 달라지는 모습을 그린다.","10분: 배경을 단순화하고 인물만 강조해 그린다.","10분: 오늘 결과물에서 가장 중요한 한 컷을 다시 그린다."][i]}));
+      const ADD={"2-6":" 그 장면의 핵심 순간을 러프로 그려 대사가 들어갈 자리를 정한다.","3-6":" 원고와 어긋난 부분이 있으면 그림도 함께 손보고, 완성작을 최종본 한 장으로 정리한다.","0-2":" 두 사람이 대화하는 순간을 상반신 구도로 그린다. 대사에 넣은 행동 중 하나가 그림에 보이게 한다.","0-1":" 그 순간 {c}가 속으로 하는 생각을 3문장으로 쓴다.","0-3":" 행동하는 동안 {c}의 머릿속에 스치는 생각을 3문장으로 쓴다.","0-5":" {scene}의 소리와 냄새와 빛을 5문장으로 쓴다. 그 묘사에 나온 요소 하나는 그림에 꼭 넣는다.","1-1":" 각 장면 사이에 {c}가 무엇을 보고 무엇을 느끼는지 4문장으로 쓴다.","1-3":" {prop}이 {c}에게 어떤 의미인지 4문장으로 쓴다.","1-5":" 공간이 {c}를 몰아붙이는 순간을 소리와 빛을 넣어 5문장으로 쓴다. 그 장면을 배경 중심 러프로 그린다.","3-1":" 이 장면이 원고의 첫 문장이 된다면 어떻게 시작할지 3가지 버전으로 쓴다.","3-2":" 선택한 빛이 만드는 분위기를 4문장으로 쓴다.","3-3":" 그 순간 {c}와 {support}가 주고받는 대사를 6~8줄로 쓴다.","3-4":" {prop}이 처음 등장하는 문장을 2가지 버전으로 쓴다.","3-5":" 그림에 담기지 않은 이 장면의 소리와 냄새를 4문장으로 쓴다."};
+      base[wi]=base[wi].map((t,i)=>t+(ADD[wi+"-"+i]||""));
+      return base[wi].map((text,i)=>({title:names[i],task:text,deliver:"오늘 만든 글과 그림 결과물 1세트",micro:["① 관찰 스케치: 손님 한 명의 자세를 막대 인형처럼 선 3~5개로 빠르게 그린다(몸통·팔·다리의 방향만 잡고, 윤곽선이나 옷은 그리지 않는다). ② 폰 메모: 그 사람의 첫인상을 한 줄 적는다. ③ 읽기: 좋아하는 웹소설 1화를 읽고 첫 문장이 어떻게 시작하는지 한 줄로 분석한다.", "① 손님 표정 하나를 작게 스케치하고 이유를 한 줄 상상해 적는다. ② 폰 메모: 오늘 들은 말투 하나. ③ 보기: 웹소설 표지 1장을 보고 눈에 먼저 들어온 요소를 한 줄로 적는다.", "① 들은 대화 한 토막을 대사 한 줄로 메모하고, 그 사람의 손짓을 스케치한다. ② 폰으로 대사 3줄을 이어 써본다. ③ 읽기: 웹소설의 대화 장면에서 대사 사이 행동이 어떻게 쓰였는지 한 줄로 분석한다.", "① 컵이나 카드를 든 손을 스케치한다. ② 그 손의 행동을 한 문장으로 쓴다. ③ 보기: 마음에 드는 삽화 1장에서 소품이 어디에 놓였는지 한 줄로 분석한다.", "① 두 사람의 거리와 시선을 스케치한다. ② 둘의 관계를 한 문장으로 추측해 쓴다. ③ 읽기: 웹소설 한 화에서 두 인물의 감정이 바뀌는 문장 하나를 찾아 적는다.", "① 카페 한 구석을 3분 안에 스케치한다. ② 소리·냄새·빛을 폰에 3줄로 적는다. ③ 보기: 좋아하는 삽화 1장의 구도를 3~4개의 큰 선으로 단순화해 그려본다.", "① 이번 주 스케치와 메모 중 하나를 골라 이번 주 장면에 넣을 방법을 적는다. ② 이번 주 읽은 1화의 마지막 문장이 왜 다음 화를 궁금하게 하는지 한 줄로 적는다."][i]}));
     })()
   }))
 }));
 
+function josa(w,j){w=String(w||"");const ch=w.charCodeAt(w.length-1);if(ch<0xAC00||ch>0xD7A3)return w+j;const f=(ch-0xAC00)%28;
+ if(j==="이"||j==="가")return w+(f?"이":"가");if(j==="은"||j==="는")return w+(f?"은":"는");if(j==="을"||j==="를")return w+(f?"을":"를");
+ if(j==="과"||j==="와")return w+(f?"과":"와");return w+((f===0||f===8)?"로":"으로")}
 function fill(s,p){
+ s=String(s).replace(/\{(c|support|prop|outfit|scene|arc)\}(으로|이|가|은|는|을|를|과|와|로)/g,(m,k,j)=>josa(k==="arc"?(p.arc||""):p[k],j));
  return String(s).replace(/\{c\}/g,p.c).replace(/\{s\}/g,p.s).replace(/\{emotion\}/g,p.emotion).replace(/\{prop\}/g,p.prop).replace(/\{outfit\}/g,p.outfit).replace(/\{support\}/g,p.support).replace(/\{scene\}/g,p.scene).replace(/\{hook\}/g,p.hook).replace(/\{arc\}/g,p.arc||"");
 }
 function fillAny(v,p){return Array.isArray(v)?v.map(x=>fill(x,p)).join(" · "):fill(v,p)}
@@ -158,7 +167,7 @@ function dateShort(d){const [,m,day]=d.split("-");return `${Number(m)}/${Number(
 function buildMissions(){
  const arr=[]; let id=0;
  CURRICULUM.forEach((p,pi)=>p.weeks.forEach((w,wi)=>w.days.forEach((d,di)=>{
-   const date=dateAdd(START,id);
+   const date=dateAdd(ANCHOR,id);
    const pp={...p,arc:w.name};
    const task=fill(d.task,pp);
    arr.push({id,week:pi*4+wi+1,weekTitle:p.title,semester:Math.floor((pi*4+wi)/12)+1,semesterTitle:`${Math.floor((pi*4+wi)/12)+1}학기`,day:di+1,date,dateShort:dateShort(date),title:`${p.title} · ${w.name}`,dayTitle:d.title,meta:`${date} · ${di===5?"3~6시간":di===6?"1~3시간":"2~4시간"}`,taskSteps:[task],deliver:d.deliver,micro:d.micro,projectIndex:pi,phaseIndex:wi});
@@ -167,9 +176,48 @@ function buildMissions(){
  return arr;
 }
 const MISSIONS=buildMissions();
+const HKEY="studyPlannerHeavy2";let heavy=[0,1,2];
+try{const h=JSON.parse(localStorage.getItem(HKEY)||"null");if(Array.isArray(h))heavy=h}catch(e){}
+const EXT="집중일 확장: 오늘 그림을 명암과 채색 한 단계까지 마감하고, 오늘 쓴 글은 소리 내어 읽으며 퇴고한다.";
+const MKT=pi=>pi<6?"월말 공개: 이달의 완성작(그림 + 글 발췌 3~5줄)을 블로그나 SNS에 공개하고, 반응이나 스스로 느낀 점 1개를 메모한다.":pi<12?"월말 공개: 완성 그림을 웹소설 표지 비율(세로형)로 잘라 보고, 손톱만 한 썸네일에서도 읽히는지 확인한 뒤 공개한다.":pi<21?"월말 공개: 완성 그림을 표지 시안(세로 비율, 인물이 작은 썸네일에서도 읽히는 구도)으로 정리하고, 원고 끝에 다음 화 훅 한 줄을 붙여 함께 공개한다.":"월말 정리: 완성작을 포트폴리오 페이지에 정리하고, 연재 플랫폼 투고 또는 공모전 요강 하나를 찾아 마감일을 적어둔다.";
+const POOL=["표정 : {c}의 표정을 기쁨·놀람·망설임 3가지로 얼굴만 작게 그린다.", "표정 : 같은 얼굴에서 눈썹만 바꿔 감정 4가지를 그린다.", "표정 : {c}가 말하기 직전의 입 모양과 시선을 3가지로 그린다.", "표정 : 눈물을 참는 얼굴과 웃음을 참는 얼굴을 나란히 그린다.", "헤어 : {c}의 헤어스타일 실루엣을 5가지 만들어 보고 하나를 고른다.", "헤어 : 앞·옆·뒤에서 본 {c}의 머리 흐름을 각각 그린다.", "헤어 : 바람에 날리는 머리와 젖은 머리를 한 번씩 그린다.", "헤어 : 묶은 머리 3종(포니테일·땋기·올림)을 그린다.", "의상 : {outfit}에서 주름이 생기는 곳(팔꿈치·무릎·허리)을 표시하며 그린다.", "의상 : {outfit}의 소매와 칼라를 크게 확대해 디테일을 그린다.", "의상 : 망토나 치맛자락이 움직일 때 흐르는 선을 3가지로 그린다.", "의상 : {outfit}의 재질(가죽·천·금속) 중 하나를 골라 질감만 그린다.", "의상 : {outfit}의 뒷모습을 러프로 그린다.", "소품 : {prop}을 정면·측면·3/4 각도로 작게 그린다.", "소품 : {prop}을 손에 쥐는 방법 3가지를 그린다.", "소품 : {prop}이 낡거나 젖거나 부서진 상태를 그린다.", "소품 : 지금 눈앞에 있는 물건 하나를 3방향으로 단순화해 그린다.", "손 : 무언가를 쥐거나 건네는 손 3가지를 그린다.", "신발·장갑 : {c}가 신을 법한 신발이나 장갑 1가지를 그린다.", "액세서리 : {c}를 상징하는 액세서리(브로치·반지 등) 3안을 그린다.", "글 : {outfit}을 입은 {c}의 모습을 색과 질감을 넣어 한 문장으로 묘사한다.", "글 : {prop}이 어떻게 낡았는지 한 문장으로 쓴다.", "글 : 처음 본 사람의 시선으로 {c}의 머리카락과 표정을 두 문장으로 쓴다.", "글 : {c}의 신발이나 손끝처럼 사소한 곳 하나로 성격을 보여주는 문장을 쓴다."];
+const DRILL=[(d,w)=>`관찰: '${d}' 기술이 잘 드러난 그림 1장과 '${w}' 기술이 잘 쓰인 문장 1개를 찾아, 왜 좋은지 각각 한 줄로 적는다.`,
+(d,w)=>`모작: 그림은 '${d}'의 핵심만 5분간 따라 그린다. 글은 '${w}' 기법으로 이번 장면의 문장 2개를 쓴다.`,
+(d,w)=>`기본 반복: '${d}'의 기본 형태를 각도나 크기를 바꿔 3번 그린다. 글은 같은 내용을 3가지 문장으로 다르게 써본다.`,
+(d,w)=>`조건 바꾸기: 어제 그린 것에서 빛·각도·감정 중 하나만 바꿔 다시 그린다. 글은 시점이나 어조를 바꿔 한 문장을 다시 쓴다.`,
+(d,w)=>`속도전: '${d}' 기술을 3분 안에 4장 그린다. 글은 '${w}' 기술을 살려 3분 안에 3문장을 쓴다.`,
+(d,w)=>`적용: 오늘 그림에 '${d}' 기술을 의식적으로 하나 적용한다. 글은 오늘 쓴 문장 중 '${w}' 기술이 약한 곳 하나를 고친다.`,
+(d,w)=>`점검: 이번 주 결과물에서 '${d}' 기술이 가장 약한 곳 하나를 골라 다시 그린다. 글은 '${w}' 기술이 가장 좋았던 문장 하나를 골라 이유를 적는다.`];
+const FB="합평(월 1회): 지금 러프와 초고를 온라인 합평방·SNS·지인 중 한 곳에 보여주고 피드백 2개를 받는다. 다음 주에 반영할 것 1개를 고른다.";
+const CHECK="1년 점검: ① 12개월 결과물 중 베스트 3점을 고른다. ② 지인이나 SNS에서 소액 커미션 또는 표지 시안 의뢰를 1건 받아본다. ③ 그림과 글 중 수익에 더 가까운 쪽을 정하고, 앞으로 6개월의 시간 비율(예: 그림 6 : 글 4)을 적는다.";
+const ONCE={8:"장르별 표지 문법 조사: 판타지·로판·현판 중 2개 장르의 인기 표지 10장씩을 보고, 인물 배치·색·구도의 공통점 3가지를 적는다.",10:"표지 러프 첫 시도: 내 웹소설 주인공으로 세로 비율 표지 러프 1장을 그리고, 작은 썸네일 크기에서 읽히는지 확인한다.",12:"포트폴리오 구성: 지금까지 그림 중 5점(대표작 1, 캐릭터 2, 장면 2)을 골라 순서를 정하고, 부족한 종류를 적는다.",14:"커미션 안내문 초안: 다른 작가의 안내문 3개를 비교한 뒤, 작업 범위·수정 횟수·납기·사용 범위·가격표를 정리한다.",15:"시범 커미션: 지인이나 SNS에서 무료 또는 저가 커미션 1건을 받아 견적, 납기, 수정 과정을 실제로 진행한다.",16:"타임어택: 그림 1장을 3시간 안에 완성해 보고, 어디서 시간이 샜는지 기록한다.",18:"표지 시안 2안: 같은 인물로 구도가 다른 표지 시안 2장을 만들고, 어느 쪽이 썸네일에서 더 눈에 띄는지 비교한다.",20:"가격표 재조정: 지금까지의 커미션·연재 반응을 정리하고, 가격과 납기를 다시 정한다."};
+const BASE="기준선 남기기: 지금 실력 그대로 인물 전신 1장(30분)과 200자 글 1편을 남겨둔다. 학기가 끝날 때마다 이것과 비교한다.";
+const REVIEW="주간 회고(5분): 잘된 점 1개, 막힌 점 1개, 다음 주에 바꿀 점 1개를 3줄로 쓴다.";
+const SEM="학기 점검: 첫날 남긴 기준선 그림·글과 이번 학기에 가장 잘한 그림·글을 나란히 놓고, 달라진 점 3가지와 다음 학기 약점 1가지를 적는다.";
+function extras(m){const pi=m.projectIndex,w=m.phaseIndex,d=m.day,o=[];
+ if(pi>=6){const n=pi<12?3000:5000;
+  if(d===4)o.push("연재 준비: 내 웹소설의 이번 주 화에서 일어날 사건 3개와 마지막 훅 한 줄을 정한다.");
+  if(d===5)o.push(`연재 초고 1/2: 내 웹소설의 이번 주 화 앞부분을 ${n/2}자 안팎으로 쓴다.`);
+  if(d===6)o.push(`연재 초고 2/2: 나머지를 써서 한 화(${n}자 안팎)를 채우고, 마지막은 다음 화 훅 한 줄로 끝낸다.`);
+  if(d===7)o.push("연재 퇴고: 소리 내어 읽으며 다듬고 이번 주 화를 완성본으로 저장한다."+(pi>=12?" 아마추어 연재란이나 블로그에 올리고 조회·댓글을 기록한다.":""))}
+ if(pi>=2&&w===2&&d===7)o.push(FB);
+ if(w===1&&d===7&&ONCE[pi])o.push(ONCE[pi]);
+ if(w===3&&d===7){if(pi===11)o.push(CHECK);o.push(MKT(pi))}
+ if(m.id===1)o.push(BASE);
+ if(d===7)o.push(REVIEW);
+ if(w===3&&d===7&&pi%3===2)o.push(SEM);
+ return o}
+function lightSteps(t){const ss=t.match(/[^.]+\./g)||[t];let prev="w";const w=[],d=[];
+ ss.forEach(x=>{x=x.trim();const k=/그린|그려|러프|스케치/.test(x)?"d":/쓴다|쓰고|문장|줄로|\d+자/.test(x)?"w":prev;prev=k;(k==="d"?d:w).push(x)});
+ return(w.length&&d.length)?["📝 글 파트: "+w.join(" "),"✏️ 그림 파트(밤 2시간): "+d.join(" ")]:[t]}
+function applyMeta(){MISSIONS.forEach(m=>{if(m.base===undefined){m.base=m.taskSteps[0];m.microBase=m.micro}const P=PROJECTS[m.projectIndex],h=heavy.includes(new Date(m.date+"T12:00:00").getDay());
+ const st=[...(h?[m.base]:lightSteps(m.base)),`이달의 기술 연습(15분) · ${DRILL[m.day-1](P.skillDraw,P.skillWrite)}`];if(h)st.push(EXT);st.push(...extras(m));
+ m.taskSteps=st;m.micro=m.microBase+"　＋ 외형 연습(5~10분): "+fill(POOL[m.id%POOL.length],{...P,arc:""});m.meta=`${m.date} · ${h?"집중일 5~6시간":"밤 2시간 + 틈새 미션"}`})}
+applyMeta();
 const KEY="studyPlannerDone", WRITE_KEY="studyPlannerWriting";
 let done={}, writing={};
 try{done=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){done={}}
+if(done[0]===undefined)done[0]=true; /* 1주차 1일차는 수요일(시작 전날)이라 건너뜀 */
 try{writing=JSON.parse(localStorage.getItem(WRITE_KEY)||"{}")||{}}catch(e){writing={}}
 function saveDone(){try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){toast("저장 공간이 부족해요")}}
 function saveWriting(){try{localStorage.setItem(WRITE_KEY,JSON.stringify(writing))}catch(e){toast("글 저장 공간이 부족해요")}}
@@ -184,27 +232,28 @@ const todayISO=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.get
 const clampDate=d=>d<START?START:d>END?END:d;
 const byDate=d=>MISSIONS.find(x=>x.date===d)||MISSIONS[0];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+const dayNo=x=>x.week===1?x.day-1:x.day;
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 function toast(t){toastEl.textContent=t;toastEl.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>toastEl.classList.remove("show"),1300)}
-function isWritingTask(s){return /(쓴다|작성|대화|문장|문장을|말투|독백|원고|설명한다|설명하|적는다|적고|정한다|고른다|고르다|원한다|원하는|생각을|이유를|감정이 바뀌|감각|소리|냄새)/.test(s)}
+function isWritingTask(s){return /(\d+자|쓰고|쓴다|작성|대화|문장|문장을|말투|독백|원고|설명한다|설명하|적는다|적고|정한다|고른다|고르다|원한다|원하는|생각을|이유를|감정이 바뀌|감각|소리|냄새)/.test(s)}
 function writingPrompts(x){return x.taskSteps.filter(isWritingTask)}
 function hasWriting(x){return writingPrompts(x).length>0}
 function writingKey(x){return String(x.id)}
 function renderToday(date=todayISO()){
- const x=byDate(clampDate(date)),weekDone=MISSIONS.filter(m=>m.week===x.week&&done[m.id]).length,totalDone=MISSIONS.filter(m=>done[m.id]).length;
+ const x=byDate(clampDate(date)),weekDone=MISSIONS.filter(m=>m.week===x.week&&m.id!==0&&done[m.id]).length,totalDone=MISSIONS.filter(m=>m.id!==0&&done[m.id]).length;
  const prompts=writingPrompts(x),promptHtml=prompts.length?`<div class="action-row"><button class="action-btn primary" data-write="${x.id}">✍️ 글쓰기 미션 열기</button><button class="action-btn" data-photo="${x.id}">🎨 그림 기록</button></div>`:`<div class="action-row"><button class="action-btn" data-photo="${x.id}">🎨 그림 기록</button></div>`;
  const steps=x.taskSteps.map(v=>`<li>${esc(v)}</li>`).join("");
- main.innerHTML=`<section class="card today-card"><div class="kicker">W${String(x.week).padStart(2,"0")} · DAY ${x.day} · ${esc(x.semesterTitle)}</div><div class="today-date">${fmt(x.date)}</div><div class="project-label">프로젝트 · ${esc(x.weekTitle)}</div><div class="mission-title">${esc(x.dayTitle)}</div><div class="meta">${esc(x.meta)}</div><div class="block"><div class="label">오늘 할 일</div><div class="task"><ol class="task-list">${steps}</ol></div>${promptHtml}</div><div class="block"><div class="label">완료 기준</div><div class="deliver">${esc(x.deliver)}</div></div><div class="block"><div class="label">☕ 틈새 미션</div><div class="micro">${esc(x.micro)}</div></div><label class="checkrow"><input type="checkbox" id="check" ${done[x.id]?"checked":""}> 미션 완료</label><div class="progress-wrap"><div class="progress-head"><span>이번 주</span><b>${weekDone} / 7</b></div><div class="progress"><span style="width:${pct(weekDone,7)}%"></span></div><div class="progress-head" style="margin-top:10px"><span>2년 전체</span><b>${totalDone} / 672 · ${pct(totalDone,672)}%</b></div><div class="progress"><span style="width:${pct(totalDone,672)}%"></span></div></div></section>`;
+ main.innerHTML=`<section class="card today-card"><div class="kicker">W${String(x.week).padStart(2,"0")} · DAY ${dayNo(x)} · ${esc(x.semesterTitle)}</div><div class="today-date">${fmt(x.date)}</div><div class="project-label">프로젝트 · ${esc(x.weekTitle)}</div><div class="project-label">📌 그림 · ${esc(PROJECTS[x.projectIndex].skillDraw)} / 글 · ${esc(PROJECTS[x.projectIndex].skillWrite)}</div><div class="mission-title">${esc(x.dayTitle)}</div><div class="meta">${esc(x.meta)}</div><div class="block"><div class="label">오늘 할 일</div><div class="task"><ol class="task-list">${steps}</ol></div>${promptHtml}</div><div class="block"><div class="label">완료 기준</div><div class="deliver">${esc(x.deliver)}</div></div><div class="block"><div class="label">☕ 틈새 미션</div><div class="micro">${esc(x.micro)}</div></div><label class="checkrow"><input type="checkbox" id="check" ${done[x.id]?"checked":""}> 미션 완료</label><div class="progress-wrap"><div class="progress-head"><span>이번 주</span><b>${weekDone} / ${x.week===1?6:7}</b></div><div class="progress"><span style="width:${pct(weekDone,x.week===1?6:7)}%"></span></div><div class="progress-head" style="margin-top:10px"><span>2년 전체</span><b>${totalDone} / 671 · ${pct(totalDone,671)}%</b></div><div class="progress"><span style="width:${pct(totalDone,671)}%"></span></div></div></section>`;
  $("check").onchange=e=>{done[x.id]=e.target.checked;saveDone();renderToday(x.date);toast(e.target.checked?"완료했어요 ✓":"완료를 취소했어요")};
  main.querySelectorAll("[data-write]").forEach(b=>b.onclick=()=>openWriting(x));main.querySelectorAll("[data-photo]").forEach(b=>b.onclick=()=>openPhotos(x));
 }
 function renderWeeks(selectedDate){
  const weeks=[...new Set(MISSIONS.map(m=>m.week))];
- weekList.innerHTML=weeks.map(w=>{const arr=MISSIONS.filter(m=>m.week===w),open=arr.some(m=>m.date===selectedDate);return `<details class="week" ${open?"open":""}><summary>W${String(w).padStart(2,"0")} · ${esc(arr[0].weekTitle)} <span style="color:var(--muted);font-size:11px">${esc(arr[0].semesterTitle)}</span></summary><div class="days">${arr.map(x=>{const steps=x.taskSteps.map(v=>`<li>${esc(v)}</li>`).join("");const btns=`<div class="action-row"><button class="action-btn" data-write="${x.id}" ${hasWriting(x)?"":"style=\"display:none\""}>✍️ 글쓰기</button><button class="action-btn" data-photo="${x.id}">🎨 그림 기록</button></div>`;return `<details class="day" ${x.date===selectedDate?"open":""}><summary><em>DAY ${x.day}</em>${x.dateShort}<b>${done[x.id]?"완료":"미완료"}</b></summary><div class="day-mission"><div class="small-mission"><div class="project-label">프로젝트 · ${esc(x.weekTitle)}</div><div class="mission-title">${esc(x.dayTitle)}</div><div class="meta">${esc(x.meta)}</div><div class="block"><div class="label">오늘 할 일</div><div class="task"><ol class="task-list">${steps}</ol></div>${btns}</div><div class="block"><div class="label">완료 기준</div><div class="deliver">${esc(x.deliver)}</div></div><div class="block"><div class="label">☕ 틈새 미션</div><div class="micro">${esc(x.micro)}</div></div></div></div></details>`}).join("")}</div></details>`}).join("");
+ weekList.innerHTML=weeks.map(w=>{const arr=MISSIONS.filter(m=>m.week===w&&m.id!==0),open=arr.some(m=>m.date===selectedDate);return `<details class="week" ${open?"open":""}><summary>W${String(w).padStart(2,"0")} · ${esc(arr[0].weekTitle)} <span style="color:var(--muted);font-size:11px">${esc(arr[0].semesterTitle)}</span></summary><div class="days">${arr.map(x=>{const steps=x.taskSteps.map(v=>`<li>${esc(v)}</li>`).join("");const btns=`<div class="action-row"><button class="action-btn" data-write="${x.id}" ${hasWriting(x)?"":"style=\"display:none\""}>✍️ 글쓰기</button><button class="action-btn" data-photo="${x.id}">🎨 그림 기록</button></div>`;return `<details class="day" ${x.date===selectedDate?"open":""}><summary><em>DAY ${dayNo(x)}</em>${x.dateShort}<b>${done[x.id]?"완료":"미완료"}</b></summary><div class="day-mission"><div class="small-mission"><div class="project-label">프로젝트 · ${esc(x.weekTitle)}</div><div class="project-label">📌 그림 · ${esc(PROJECTS[x.projectIndex].skillDraw)} / 글 · ${esc(PROJECTS[x.projectIndex].skillWrite)}</div><div class="mission-title">${esc(x.dayTitle)}</div><div class="meta">${esc(x.meta)}</div><div class="block"><div class="label">오늘 할 일</div><div class="task"><ol class="task-list">${steps}</ol></div>${btns}</div><div class="block"><div class="label">완료 기준</div><div class="deliver">${esc(x.deliver)}</div></div><div class="block"><div class="label">☕ 틈새 미션</div><div class="micro">${esc(x.micro)}</div></div></div></div></details>`}).join("")}</div></details>`}).join("");
  weekList.querySelectorAll("[data-write]").forEach(b=>{if(b.style.display!=="none")b.onclick=()=>openWriting(byDate(MISSIONS[Number(b.dataset.write)].date))});weekList.querySelectorAll("[data-photo]").forEach(b=>b.onclick=()=>openPhotos(byDate(MISSIONS[Number(b.dataset.photo)].date)));
 }
-function openWriting(x){const prompts=writingPrompts(x);if(!prompts.length)return;document.getElementById("writingModal").style.display="block";document.getElementById("photoModal").style.display="none";document.getElementById("backupModal").style.display="none";backdrop.classList.add("open");document.getElementById("modalTitle").textContent="✍️ 글쓰기 미션";document.getElementById("modalSub").textContent=`W${String(x.week).padStart(2,"0")} DAY ${x.day} · ${fmt(x.date)} · ${x.dayTitle}`;document.getElementById("writingPrompt").innerHTML='<b>이번 미션에서 쓸 내용</b>'+prompts.map((p,i)=>`${i+1}. ${esc(p)}`).join('<br>');document.getElementById("writingArea").value=writing[writingKey(x)]||"";document.getElementById("writingSave").onclick=()=>{writing[writingKey(x)]=document.getElementById("writingArea").value;saveWriting();closeModal();toast("글을 저장했어요 ✓")};setTimeout(()=>document.getElementById("writingArea").focus(),100)}
-async function openPhotos(x){document.getElementById("writingModal").style.display="none";document.getElementById("backupModal").style.display="none";document.getElementById("photoModal").style.display="block";backdrop.classList.add("open");document.getElementById("photoSub").textContent=`W${String(x.week).padStart(2,"0")} DAY ${x.day} · ${fmt(x.date)} · ${x.dayTitle}`;backdrop.dataset.photoMission=x.id;await renderPhotos(x)}
+function openWriting(x){const prompts=writingPrompts(x);if(!prompts.length)return;document.getElementById("writingModal").style.display="block";document.getElementById("photoModal").style.display="none";document.getElementById("backupModal").style.display="none";backdrop.classList.add("open");document.getElementById("modalTitle").textContent="✍️ 글쓰기 미션";document.getElementById("modalSub").textContent=`W${String(x.week).padStart(2,"0")} DAY ${dayNo(x)} · ${fmt(x.date)} · ${x.dayTitle}`;document.getElementById("writingPrompt").innerHTML='<b>이번 미션에서 쓸 내용</b>'+prompts.map((p,i)=>`${i+1}. ${esc(p)}`).join('<br>');document.getElementById("writingArea").value=writing[writingKey(x)]||"";document.getElementById("writingSave").onclick=()=>{writing[writingKey(x)]=document.getElementById("writingArea").value;saveWriting();closeModal();toast("글을 저장했어요 ✓")};setTimeout(()=>document.getElementById("writingArea").focus(),100)}
+async function openPhotos(x){document.getElementById("writingModal").style.display="none";document.getElementById("backupModal").style.display="none";document.getElementById("photoModal").style.display="block";backdrop.classList.add("open");document.getElementById("photoSub").textContent=`W${String(x.week).padStart(2,"0")} DAY ${dayNo(x)} · ${fmt(x.date)} · ${x.dayTitle}`;backdrop.dataset.photoMission=x.id;await renderPhotos(x)}
 async function renderPhotos(x){const grid=document.getElementById("photoGrid"),items=await idbGet(String(x.id));grid.innerHTML=items.map((it,i)=>`<div class="photo-item"><img src="${it.data}" alt="그림 기록 ${i+1}"><button class="photo-del" data-del="${i}">×</button></div>`).join("");grid.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{const a=await idbGet(String(x.id));a.splice(Number(b.dataset.del),1);await idbPut(String(x.id),a);await renderPhotos(x);toast("사진을 삭제했어요")})}
 async function compressImage(file){return new Promise((resolve,reject)=>{const fr=new FileReader();fr.onload=()=>{const img=new Image();img.onload=()=>{const max=1400,scale=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));const ctx=c.getContext("2d");ctx.drawImage(img,0,0,c.width,c.height);resolve({data:c.toDataURL("image/jpeg",.78),name:file.name})};img.onerror=reject;img.src=fr.result};fr.onerror=reject;fr.readAsDataURL(file)})}
 document.getElementById("photoInput").onchange=async e=>{const id=backdrop.dataset.photoMission;if(!id)return;try{const old=await idbGet(id);for(const f of [...e.target.files])old.push(await compressImage(f));await idbPut(id,old);const x=MISSIONS.find(m=>String(m.id)===String(id));await renderPhotos(x);toast("사진을 저장했어요 ✓")}catch(err){toast("사진 저장에 실패했어요") }e.target.value=""};
@@ -216,12 +265,35 @@ async function exportBackup(){const payload={version:1,createdAt:new Date().toIS
 async function importBackup(file){const payload=JSON.parse(await file.text());if(!payload||!payload.done||!payload.writing)throw new Error("invalid");done=payload.done;writing=payload.writing;saveDone();saveWriting();const db=await openDB();await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,"readwrite"),st=tx.objectStore(STORE);st.clear();for(const [k,v] of Object.entries(payload.images||{}))st.put(v,k);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});closeModal();renderToday(todayISO());toast("백업을 복원했어요 ✓")}
 document.getElementById("backupExport").onclick=exportBackup;document.getElementById("backupImportBtn").onclick=()=>document.getElementById("backupInput").click();document.getElementById("backupInput").onchange=async e=>{if(!e.target.files[0])return;try{if(confirm("현재 기록을 백업 파일의 기록으로 바꿀까요?"))await importBackup(e.target.files[0])}catch(err){toast("백업 파일을 읽지 못했어요")}e.target.value=""};
 function openBackup(){document.getElementById("writingModal").style.display="none";document.getElementById("photoModal").style.display="none";document.getElementById("backupModal").style.display="block";backdrop.classList.add("open")}
-todayBtn.onclick=()=>{renderToday(todayISO());datePanel.classList.remove("open");scrollTo({top:0,behavior:"smooth"})};
+todayBtn.onclick=()=>{renderToday(nextMission().date);datePanel.classList.remove("open");scrollTo({top:0,behavior:"smooth"})};
 dateBtn.onclick=()=>{datePanel.classList.toggle("open");if(datePanel.classList.contains("open")){dateInput.value=clampDate(todayISO());renderWeeks(dateInput.value)}};
 jumpBtn.onclick=()=>{const d=clampDate(dateInput.value||todayISO());renderToday(d);renderWeeks(d);scrollTo({top:0,behavior:"smooth"})};
 dateInput.onchange=()=>renderWeeks(clampDate(dateInput.value));
 backupBtn.onclick=openBackup;
-renderToday(todayISO());
+const nextMission=()=>MISSIONS.find(m=>!done[m.id])||MISSIONS[MISSIONS.length-1];
+let lastDate=null;const _rt=renderToday;
+renderToday=function(d){lastDate=d;_rt(d);const x=byDate(clampDate(d)),lag=Math.round((new Date(todayISO()+"T12:00:00")-new Date(x.date+"T12:00:00"))/864e5);
+ if(todayISO()<START&&x.id===0)main.insertAdjacentHTML("afterbegin",`<div class="card" style="padding:12px 15px;font-size:12px;color:#756c63">${dateShort(START)}(수) 시작이에요. 그전까지는 준비 기간: 스케치북과 필기구를 준비하고, 지금 실력 기준으로 그림 1장과 글 1편을 남겨두세요.</div>`);
+ if(lag>0&&!done[x.id])main.insertAdjacentHTML("afterbegin",`<div class="card" style="padding:12px 15px;font-size:12px;color:#756c63">예정일(${dateShort(x.date)})보다 ${lag}일 밀렸어요. 건너뛰지 않고 이어서 하면 돼요.</div>`)};
+function heavyUI(){const names=["일","월","화","수","목","금","토"];let el=document.getElementById("heavyRow");
+ if(!el){datePanel.insertAdjacentHTML("afterbegin",'<div class="label">집중일 요일 (5~6시간)</div><div class="action-row" id="heavyRow" style="margin:0 0 14px"></div>');el=document.getElementById("heavyRow")}
+ el.innerHTML=names.map((n,i)=>`<button class="action-btn ${heavy.includes(i)?"primary":""}" data-h="${i}">${n}</button>`).join("");
+ el.querySelectorAll("[data-h]").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.h);heavy=heavy.includes(i)?heavy.filter(v=>v!==i):[...heavy,i];try{localStorage.setItem(HKEY,JSON.stringify(heavy))}catch(e){}applyMeta();heavyUI();if(lastDate)renderToday(lastDate);toast("집중일을 바꿨어요")})}
+const LBK="studyPlannerLastBackup";
+function extraCards(d){const x=byDate(clampDate(d));let h="";
+ const tot=MISSIONS.filter(m=>m.id!==0&&done[m.id]).length;let last=null;try{last=localStorage.getItem(LBK)}catch(e){}
+ const gap=Math.round((new Date(todayISO()+"T12:00:00")-new Date((last||START)+"T12:00:00"))/864e5);
+ if(tot>=7&&gap>=14)h+=`<div class="card" style="padding:12px 15px;font-size:12px;color:#756c63">${last?`마지막 백업이 ${gap}일 전이에요.`:"아직 백업한 적이 없어요."} 글과 그림 사진은 이 기기에만 저장돼요. 위의 💾 기록 백업에서 파일을 만들어 두세요.</div>`;
+ if(done[x.id])h+=`<div class="action-row"><button class="action-btn primary" id="nextBtn">다음 미션 →</button></div>`;
+ if(h){main.insertAdjacentHTML("beforeend",h);const b=document.getElementById("nextBtn");if(b)b.onclick=()=>{renderToday(nextMission().date);scrollTo({top:0,behavior:"smooth"})}}}
+const _rt2=renderToday;renderToday=function(d){_rt2(d);extraCards(d)};
+const _eb=exportBackup;exportBackup=async function(){await _eb();try{localStorage.setItem(LBK,todayISO())}catch(e){}};
+document.getElementById("backupExport").onclick=exportBackup;
+const wa=document.getElementById("writingArea"),ccEl=document.getElementById("charCount");
+const cc=()=>{ccEl.textContent=wa.value.length.toLocaleString()+"자 (공백 포함)"};
+wa.addEventListener("input",cc);const _ow=openWriting;openWriting=function(x){_ow(x);cc()};
+heavyUI();
+renderToday(nextMission().date);
 </script>
 </body>
 </html>
