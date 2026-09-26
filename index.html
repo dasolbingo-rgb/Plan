@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <script>window.DPAL={"warm": {"name": "웜 브라운", "bg": "#1b1917", "card": "#24211e", "line": "#3a3430", "text": "#ece5dc", "muted": "#a79d92", "soft": "#2f2a26", "accent": "#e2d3c0", "act": "#5b5148"}, "charcoal": {"name": "차콜", "bg": "#161718", "card": "#202124", "line": "#34363a", "text": "#e8e8e6", "muted": "#9a9ca0", "soft": "#2a2c2f", "accent": "#d9dade", "act": "#4a4d52"}, "navy": {"name": "네이비", "bg": "#111726", "card": "#1a2233", "line": "#2c3850", "text": "#e4e9f2", "muted": "#93a0b8", "soft": "#232d42", "accent": "#c9d6f0", "act": "#3b4a68"}, "forest": {"name": "포레스트", "bg": "#131a16", "card": "#1b241f", "line": "#2d3a32", "text": "#e3ece5", "muted": "#93a698", "soft": "#222d27", "accent": "#cfe0d3", "act": "#3c4d42"}, "black": {"name": "블랙", "bg": "#000000", "card": "#121212", "line": "#2a2a2a", "text": "#ededed", "muted": "#9a9a9a", "soft": "#1c1c1c", "accent": "#e6e6e6", "act": "#3a3a3a"}};window.LPAL={"cream": {"name": "크림", "bg": "#f5f1ea", "card": "#fffdf9", "line": "#e1d9cf", "text": "#292723", "muted": "#7a7168", "soft": "#eee7de", "accent": "#3e352f", "act": "#d9cbbb"}, "mono": {"name": "화이트", "bg": "#f4f4f3", "card": "#ffffff", "line": "#e2e2e0", "text": "#1f1f1e", "muted": "#707070", "soft": "#ececea", "accent": "#2b2b2b", "act": "#cfcfcc"}, "sky": {"name": "스카이", "bg": "#eef3f8", "card": "#fbfdff", "line": "#d6e0ea", "text": "#1e2733", "muted": "#66758a", "soft": "#e3ebf3", "accent": "#2f4f73", "act": "#bfd0e2"}, "sage": {"name": "세이지", "bg": "#eef2ec", "card": "#fbfdfa", "line": "#d8e0d4", "text": "#222a22", "muted": "#6b786a", "soft": "#e3eadf", "accent": "#3d5a44", "act": "#c3d2bf"}, "rose": {"name": "로즈", "bg": "#f8efef", "card": "#fffbfb", "line": "#ecd9d9", "text": "#2e2324", "muted": "#86706f", "soft": "#f2e4e4", "accent": "#8a4b52", "act": "#e2c4c6"}, "lavender": {"name": "라벤더", "bg": "#f1eff7", "card": "#fdfcff", "line": "#dedaec", "text": "#26232f", "muted": "#767089", "soft": "#e8e4f2", "accent": "#54487a", "act": "#cdc6e3"}};(function(){try{var t=localStorage.getItem("studyPlannerTheme")||"auto",R=document.documentElement;if(t!=="auto")R.dataset.theme=t;var d=t==="dark"||(t==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);var P=d?(DPAL[localStorage.getItem("studyPlannerDarkPal")]||DPAL.warm):(LPAL[localStorage.getItem("studyPlannerLightPal")]||LPAL.cream);if(t==="custom"){var C=JSON.parse(localStorage.getItem("studyPlannerCustomPal")||"null");if(C){P=C;R.dataset.theme=C.dark?"dark":"light"}}for(var k in P)if(k!=="name"&&k!=="dark")R.style.setProperty("--"+k,P[k]);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",P.bg)}catch(e){}})()</script>
-<title>Study Planner · 2026.09.25 v9</title>
+<title>Study Planner · 2026.09.26 v10</title>
 <style>
 :root{--bg:#f5f1ea;--card:#fffdf9;--line:#e1d9cf;--text:#292723;--muted:#7a7168;--soft:#eee7de;--accent:#3e352f;--act:#d9cbbb;color-scheme:light}
 :root[data-theme="dark"]{--bg:#1b1917;--card:#24211e;--line:#3a3430;--text:#ece5dc;--muted:#a79d92;--soft:#2f2a26;--accent:#e2d3c0;--act:#5b5148;color-scheme:dark}
@@ -170,7 +170,7 @@ const CURRICULUM=PROJECTS.map((p,pi)=>({
       const ADD={"2-6":" 그 장면의 핵심 순간을 러프로 그려 대사가 들어갈 자리를 정한다.","3-6":" 원고와 어긋난 부분이 있으면 그림도 함께 손보고, 완성작을 최종본 한 장으로 정리한다.","0-2":" 두 사람이 대화하는 순간을 상반신 구도로 그린다. 대사에 넣은 행동 중 하나가 그림에 보이게 한다.","0-1":" 그 순간 {c}가 속으로 하는 생각을 3문장으로 쓴다.","0-3":" 행동하는 동안 {c}의 머릿속에 스치는 생각을 3문장으로 쓴다.","0-5":" {scene}의 소리와 냄새와 빛을 5문장으로 쓴다. 그 묘사에 나온 요소 하나는 그림에 꼭 넣는다.","1-1":" 각 장면 사이에 {c}가 무엇을 보고 무엇을 느끼는지 4문장으로 쓴다.","1-3":" {prop}이 {c}에게 어떤 의미인지 4문장으로 쓴다.","1-5":" 공간이 {c}를 몰아붙이는 순간을 소리와 빛을 넣어 5문장으로 쓴다. 그 장면을 배경 중심 러프로 그린다.","3-1":" 이 장면이 원고의 첫 문장이 된다면 어떻게 시작할지 3가지 버전으로 쓴다.","3-2":" 선택한 빛이 만드는 분위기를 4문장으로 쓴다.","3-3":" 그 순간 {c}와 {support}가 주고받는 대사를 6~8줄로 쓴다.","3-4":" {prop}이 처음 등장하는 문장을 2가지 버전으로 쓴다.","3-5":" 그림에 담기지 않은 이 장면의 소리와 냄새를 4문장으로 쓴다."};
       base[wi]=base[wi].map((t,i)=>t+(ADD[wi+"-"+i]||""));
       const F=pi%4?FAMS[pi%4-1]:{names,weeks:base};
-      return F.weeks[wi].map((text,i)=>({title:WEEKNAMES[pi%4][wi][i],task:text,deliver:"오늘 만든 글과 그림 결과물 1세트",micro:["① 관찰 스케치: 손님 한 명의 자세를 막대 인형처럼 선 3~5개로 빠르게 그린다(몸통·팔·다리의 방향만 잡고, 윤곽선이나 옷은 그리지 않는다). ② 폰 메모: 그 사람의 첫인상을 한 줄 적는다. ③ 읽기: 좋아하는 웹소설 1화를 읽고 첫 문장이 어떻게 시작하는지 한 줄로 분석한다.", "① 손님 표정 하나를 작게 스케치하고 이유를 한 줄 상상해 적는다. ② 폰 메모: 오늘 들은 말투 하나. ③ 보기: 웹소설 표지 1장을 보고 눈에 먼저 들어온 요소를 한 줄로 적는다.", "① 들은 대화 한 토막을 대사 한 줄로 메모하고, 그 사람의 손짓을 스케치한다. ② 폰으로 대사 3줄을 이어 써본다. ③ 읽기: 웹소설의 대화 장면에서 대사 사이 행동이 어떻게 쓰였는지 한 줄로 분석한다.", "① 컵이나 카드를 든 손을 스케치한다. ② 그 손의 행동을 한 문장으로 쓴다. ③ 보기: 마음에 드는 삽화 1장에서 소품이 어디에 놓였는지 한 줄로 분석한다.", "① 두 사람의 거리와 시선을 스케치한다. ② 둘의 관계를 한 문장으로 추측해 쓴다. ③ 읽기: 웹소설 한 화에서 두 인물의 감정이 바뀌는 문장 하나를 찾아 적는다.", "① 카페 한 구석을 3분 안에 스케치한다. ② 소리·냄새·빛을 폰에 3줄로 적는다. ③ 보기: 좋아하는 삽화 1장의 구도를 3~4개의 큰 선으로 단순화해 그려본다.", "① 이번 주 스케치와 메모 중 하나를 골라 이번 주 장면에 넣을 방법을 적는다. ② 이번 주 읽은 1화의 마지막 문장이 왜 다음 화를 궁금하게 하는지 한 줄로 적는다."][i]}));
+      return F.weeks[wi].map((text,i)=>({k:i,title:WEEKNAMES[pi%4][wi][i],task:text,deliver:"오늘 만든 글과 그림 결과물 1세트",micro:["① 관찰 스케치: 손님 한 명의 자세를 막대 인형처럼 선 3~5개로 빠르게 그린다(몸통·팔·다리의 방향만 잡고, 윤곽선이나 옷은 그리지 않는다). ② 폰 메모: 그 사람의 첫인상을 한 줄 적는다. ③ 읽기: 좋아하는 웹소설 1화를 읽고 첫 문장이 어떻게 시작하는지 한 줄로 분석한다.", "① 손님 표정 하나를 작게 스케치하고 이유를 한 줄 상상해 적는다. ② 폰 메모: 오늘 들은 말투 하나. ③ 보기: 웹소설 표지 1장을 보고 눈에 먼저 들어온 요소를 한 줄로 적는다.", "① 들은 대화 한 토막을 대사 한 줄로 메모하고, 그 사람의 손짓을 스케치한다. ② 폰으로 대사 3줄을 이어 써본다. ③ 읽기: 웹소설의 대화 장면에서 대사 사이 행동이 어떻게 쓰였는지 한 줄로 분석한다.", "① 컵이나 카드를 든 손을 스케치한다. ② 그 손의 행동을 한 문장으로 쓴다. ③ 보기: 마음에 드는 삽화 1장에서 소품이 어디에 놓였는지 한 줄로 분석한다.", "① 두 사람의 거리와 시선을 스케치한다. ② 둘의 관계를 한 문장으로 추측해 쓴다. ③ 읽기: 웹소설 한 화에서 두 인물의 감정이 바뀌는 문장 하나를 찾아 적는다.", "① 카페 한 구석을 3분 안에 스케치한다. ② 소리·냄새·빛을 폰에 3줄로 적는다. ③ 보기: 좋아하는 삽화 1장의 구도를 3~4개의 큰 선으로 단순화해 그려본다.", "① 이번 주 스케치와 메모 중 하나를 골라 이번 주 장면에 넣을 방법을 적는다. ② 이번 주 읽은 1화의 마지막 문장이 왜 다음 화를 궁금하게 하는지 한 줄로 적는다."][i]}));
     })()
   }))
 }));
@@ -201,7 +201,7 @@ function buildMissions(){
    const date=dateAdd(ANCHOR,id);
    const pp={...p,arc:w.name};
    const task=fill(d.task,pp);
-   arr.push({id,week:pi*4+wi+1,weekTitle:p.title,semester:Math.floor((pi*4+wi)/12)+1,semesterTitle:`${Math.floor((pi*4+wi)/12)+1}학기`,day:di+1,date,dateShort:dateShort(date),title:`${p.title} · ${w.name}`,dayTitle:d.title,meta:`${date} · ${di===5?"3~6시간":di===6?"1~3시간":"2~4시간"}`,taskSteps:[task],deliver:d.deliver,micro:d.micro,projectIndex:pi,phaseIndex:wi});
+   arr.push({id,week:pi*4+wi+1,weekTitle:p.title,semester:Math.floor((pi*4+wi)/12)+1,semesterTitle:`${Math.floor((pi*4+wi)/12)+1}학기`,day:di+1,date,dateShort:dateShort(date),title:`${p.title} · ${w.name}`,dayTitle:d.title,meta:`${date} · ${di===5?"3~6시간":di===6?"1~3시간":"2~4시간"}`,taskSteps:[task],dk:d.k,deliver:d.deliver,micro:d.micro,projectIndex:pi,phaseIndex:wi});
    id++;
  })));
  return arr;
@@ -209,7 +209,7 @@ function buildMissions(){
 const MISSIONS=buildMissions();
 const HKEY="studyPlannerHeavy2";let heavy=[0,1,2];
 try{const h=JSON.parse(localStorage.getItem(HKEY)||"null");if(Array.isArray(h))heavy=h}catch(e){}
-const EXT="집중일 확장: 오늘 그림을 명암과 채색 한 단계까지 마감하고, 오늘 쓴 글은 소리 내어 읽으며 퇴고한다.";
+const EXT="집중일 확장: 오늘 그림 파트를 한 단계 더(러프면 정리까지, 정리면 명암까지) 진행하고, 오늘 쓴 글은 소리 내어 읽으며 퇴고한다.";
 const MKT=pi=>pi<6?"월말 공개: 이달의 완성작(그림 + 글 발췌 3~5줄)을 블로그나 SNS에 공개하고, 반응이나 스스로 느낀 점 1개를 메모한다.":pi<12?"월말 공개: 완성 그림을 웹소설 표지 비율(세로형)로 잘라 보고, 손톱만 한 썸네일에서도 읽히는지 확인한 뒤 공개한다.":pi<21?"월말 공개: 완성 그림을 표지 시안(세로 비율, 인물이 작은 썸네일에서도 읽히는 구도)으로 정리하고, 원고 끝에 다음 화 훅 한 줄을 붙여 함께 공개한다.":"월말 정리: 완성작을 포트폴리오 페이지에 정리하고, 연재 플랫폼 투고 또는 공모전 요강 하나를 찾아 마감일을 적어둔다.";
 const POOL=["표정: {c}의 표정을 기쁨·놀람·망설임 3가지로 얼굴만 작게 그린다.", "표정: 같은 얼굴에서 눈썹만 바꿔 감정 4가지를 그린다.", "표정: {c}가 말하기 직전의 입 모양과 시선을 3가지로 그린다.", "표정: 눈물을 참는 얼굴과 웃음을 참는 얼굴을 나란히 그린다.", "헤어: {c}의 헤어스타일 실루엣을 5가지 만들어 보고 하나를 고른다.", "헤어: 앞·옆·뒤에서 본 {c}의 머리 흐름을 각각 그린다.", "헤어: 바람에 날리는 머리와 젖은 머리를 한 번씩 그린다.", "헤어: 묶은 머리 3종(포니테일·땋기·올림)을 그린다.", "의상: {outfit}에서 주름이 생기는 곳(팔꿈치·무릎·허리)을 표시하며 그린다.", "의상: {outfit}의 소매와 칼라를 크게 확대해 디테일을 그린다.", "의상: 망토나 치맛자락이 움직일 때 흐르는 선을 3가지로 그린다.", "의상: {outfit}의 재질(가죽·천·금속) 중 하나를 골라 질감만 그린다.", "의상: {outfit}의 뒷모습을 러프로 그린다.", "소품: {prop}을 정면·측면·3/4 각도로 작게 그린다.", "소품: {prop}을 손에 쥐는 방법 3가지를 그린다.", "소품: {prop}이 낡거나 젖거나 부서진 상태를 그린다.", "소품: 지금 눈앞에 있는 물건 하나를 3방향으로 단순화해 그린다.", "손: 무언가를 쥐거나 건네는 손 3가지를 그린다.", "신발·장갑: {c}가 신을 법한 신발이나 장갑 1가지를 그린다.", "액세서리: {c}를 상징하는 액세서리(브로치·반지 등) 3안을 그린다.", "글: {outfit}을 입은 {c}의 모습을 색과 질감을 넣어 한 문장으로 묘사한다.", "글: {prop}이 어떻게 낡았는지 한 문장으로 쓴다.", "글: 처음 본 사람의 시선으로 {c}의 머리카락과 표정을 두 문장으로 쓴다.", "글: {c}의 신발이나 손끝처럼 사소한 곳 하나로 성격을 보여주는 문장을 쓴다."];
 const DRILL=[(d,w)=>`관찰: '${d}' 기술이 잘 드러난 그림 1장과 '${w}' 기술이 잘 쓰인 문장 1개를 찾아, 왜 좋은지 각각 한 줄로 적는다.`,
@@ -251,11 +251,101 @@ function lightSteps(t){const ss=t.match(/[^.]+\./g)||[t];let prev="w";const part
  ss.forEach(x=>{x=x.trim();const k=/그린|그려|러프|스케치/.test(x)?"d":/쓴다|쓰고|문장|줄로|\d+자/.test(x)?"w":prev;prev=k;const last=parts[parts.length-1];if(last&&last.k===k)last.t.push(x);else parts.push({k,t:[x]})});
  if(!parts.some(p=>p.k==="w")||!parts.some(p=>p.k==="d"))return[t];
  return parts.map(p=>(p.k==="w"?"글 파트: ":"그림 파트(밤 2시간): ")+p.t.join(" "))}
-function applyMeta(){MISSIONS.forEach(m=>{if(m.base===undefined){m.base=m.taskSteps[0];m.microBase=m.micro}const P=PROJECTS[m.projectIndex],h=heavy.includes(new Date(m.date+"T12:00:00").getDay());
- const st=[...(h?[m.base]:lightSteps(m.base)),`이달의 기술 연습(15분) · ${DRILL[m.day-1](P.skillDraw,P.skillWrite)}`];if(h)st.push(EXT);
- if(h&&m.projectIndex<6)st.push("기초 다지기(1시간): "+FUND[m.projectIndex][m.day-5]);
+/* ===== 퍼스널 그림 커리큘럼 (v10) ===== */
+const DRAW=[
+{t:"전신 포즈와 변장 의상",pose:"{c}가 몰래 궁을 빠져나오는 자세",alt:"위에서 내려다본",ref:"중세 후기 평민 여성복과 귀족 여성복",cond:"평민인 척하려고 골랐지만 어딘가 너무 고급스러운 옷",pc:"궁에서 들고 나온 티가 나는 단서 하나(가문 문양 등)",light:"해 질 녘 노점 등불"},
+{t:"남자 체형과 판금 갑옷",m:1,pose:"{c}가 폭우 속에서 지친 몸으로 성문 앞에 멈춰 선 자세",alt:"아래에서 올려다본",ref:"15세기 판금 갑옷과 기사 망토",cond:"오래 싸우고 돌아와 흠집과 수리 흔적이 남은 갑옷",pc:"싸움의 흔적이 남은 모습",light:"먹구름 아래 흐린 빛과 성문 횃불"},
+{t:"활 당기는 팔과 손, 가죽 경갑",pose:"{c}가 활시위를 끝까지 당긴 자세",alt:"옆에서 본",ref:"가죽 갑옷과 사냥꾼 복장",cond:"숲에 숨기 좋은 색과 자연 모티프 장식",pc:"엘프가 직접 만든 느낌",light:"안개를 뚫고 비스듬히 들어오는 새벽빛"},
+{t:"앉은 자세와 드레스 실루엣",pose:"{c}가 의자에 앉아 어깨 너머로 뒤를 돌아보는 자세",alt:"3/4 뒤쪽에서 본",ref:"18~19세기 무도회 드레스",cond:"가문의 상징색과 모티프가 들어간 드레스",pc:"가문 문양이 들어간 모습",light:"샹들리에와 촛불"},
+{t:"놀라는 동작과 로브 디자인",pose:"{c}가 폭발에 놀라 뒤로 물러나며 팔로 얼굴을 가리는 자세",alt:"위에서 내려다본",ref:"중세 학자·수도사 로브",cond:"실험하기 편하게 고친 로브, 그을음과 약품 얼룩",pc:"마법 재료로 만든 느낌",light:"폭발 섬광과 새벽 창빛"},
+{t:"남자 두 명의 앉은 구도",m:1,pose:"{c}와 {support}가 테이블을 사이에 두고 앉아 서로를 떠보는 자세",alt:"테이블 위에서 내려다본",ref:"중세 남성 평상복과 경갑",cond:"평상복 속에 무장을 숨긴 옷, 두 사람의 국적이 구분되게",pc:"비밀이 담긴 모습",light:"벽난로와 램프"},
+{t:"달리기 동세와 단축법",pose:"{c}가 몸을 앞으로 던지듯 달리는 자세",alt:"정면에서 달려오는",ref:"여행자 복장과 망토",cond:"달리기 편하고 바람에 날리는 부분이 있는 옷",pc:"소중한 것을 넣어 다니는 느낌",light:"지는 해의 역광"},
+{t:"검 쥐는 손과 소년·스승 체형 대비",m:1,pose:"{c}가 처음 받은 검을 두 손으로 받쳐 드는 자세",alt:"아래에서 올려다본",ref:"기사 서임식 복장과 문장(heraldry)",cond:"수련용이지만 기사단 문장이 들어간 갑옷",pc:"기사단 문장이 새겨진 모습",light:"훈련장에 내리쬐는 한낮 햇빛"},
+{t:"크리처 디자인과 크기 대비",nh:1,pose:"{c}가 몸을 낮춰 {support}에게 손을 내미는 자세",alt:"{support}의 눈높이에서 본",ref:"도마뱀·새·박쥐 날개 구조",cond:"{support}를 실존 동물 두 가지를 섞어 디자인",pc:"아이의 손때가 묻은 모습",light:"눈에 반사되는 오후 햇빛"},
+{t:"바람에 맞선 자세와 모피 질감",nh:1,pose:"{c}가 눈보라 속에서 몸을 웅크리고 버티는 자세",alt:"옆에서 본",ref:"북유럽·몽골 방한 복식과 늑대 사진",cond:"여러 겹 껴입은 방한복과 모피",pc:"오래된 유물 느낌",light:"눈보라 속 푸르스름한 빛"},
+{t:"올려다보는 앵글과 스케일",nh:1,pose:"{c}가 거대한 생물을 올려다보며 한 발 물러서는 자세",alt:"생물의 발밑에서 올려다본",ref:"여행자 복장과 거대 동물(고래·코끼리) 자료",cond:"{support}를 크기가 드러나는 특징(피부·뿔·무늬) 중심으로",pc:"오래 쓴 흔적이 있는 모습",light:"생물 그림자에 가려진 한낮 광장"},
+{t:"젖은 표현과 비늘 장식",nh:1,pose:"{support}가 바위에 기대 상체를 일으키는 자세",alt:"위에서 내려다본",ref:"물고기 비늘·지느러미와 해양 장신구 자료",cond:"{support}의 꼬리·지느러미와 조개·진주 장신구",pc:"바닷물에 녹슬고 깨진 모습",light:"폭풍이 걷힌 뒤 구름 사이 햇빛"},
+{t:"실내 배경과 아침 자연광",pose:"{c}가 주방 조리대에 기대 빵을 집는 자세",alt:"살짝 위에서 본",ref:"중세 궁정 주방 자료",cond:"아침에 급히 입은 간단한 드레스",pc:"궁중 식기 느낌",light:"창으로 들어오는 아침 햇살"},
+{t:"복잡한 배경 단순화와 인공 조명",pose:"{c}가 노점 앞에 쪼그려 앉아 물건을 살피는 자세",alt:"노점 안쪽에서 본",ref:"동서양 야시장 사진과 망토 자료",cond:"마법 상점 소속이 드러나는 장식이 달린 망토",pc:"빛나는 부분이 하나 있는 마법 도구 느낌",light:"노점 랜턴과 마법 불빛"},
+{t:"다인 구도와 무기 세트",m:1,pose:"{c}가 목검을 겨누다 방문객 쪽으로 돌아보는 자세",alt:"대각선 위에서 본",ref:"중세 훈련용 장비와 무기 자료",cond:"선배들과 구분되는 신참 기사의 연습용 갑옷",pc:"훈련장 무기 세트(목검·방패·과녁)와 어울리게",light:"훈련장의 늦은 오후 빛"},
+{t:"분위기 조명과 좁은 실내",pose:"{c}가 등불을 들고 초상화 앞에 멈춰 선 자세",alt:"초상화 쪽에서 본",ref:"고성 실내와 오래된 초상화 자료",cond:"먼지와 거미줄이 묻은 탐험용 외투",pc:"오래되어 녹슨 모습",light:"손에 든 등불 하나"},
+{t:"좁은 공간 구도와 카메라 앵글",pose:"{c}와 {support}가 감옥 벽에 등을 붙이고 숨죽이는 자세",alt:"천장 모서리에서 내려다본",ref:"죄수복과 지하 감옥 자료",cond:"두 사람의 출신이 구분되는 낡은 죄수복",pc:"부러지거나 녹슨 모습",light:"철창 사이로 새는 횃불"},
+{t:"표정 연기와 인물 사이 거리",pose:"{c}가 빗속에서 {support}를 보고 멈춰 선 자세",alt:"{support}의 어깨 너머에서 본",ref:"밤 외출복과 우산·후드 자료",cond:"세월의 변화가 보이는 비 오는 밤의 외출복",pc:"오래 간직해 닳은 모습",light:"가로등과 젖은 바닥 반사광"},
+{t:"군중과 의상 통일감",pose:"{c}가 연회장 한가운데서 깨진 잔을 보고 돌아서는 자세",alt:"연회장 2층에서 내려다본",ref:"왕실 연회 정장과 제복 자료",cond:"같은 연회에 온 사람들의 의상 3종(통일감 있게, 신분은 구분되게)",pc:"값비싼 식기 느낌",light:"샹들리에와 창밖 밤빛"},
+{t:"인물별 실루엣 구분과 갑옷 바리에이션",m:1,pose:"{c}가 성벽 위에서 {support}의 어깨에 손을 올린 자세",alt:"성벽 아래에서 올려다본",ref:"공성전 갑옷과 병사 장비 자료",cond:"기사·어린 병사·지휘관 갑옷 3종, 실루엣만으로 구분되게",pc:"전장에서 지니는 개인 물건 느낌",light:"전투 전날 노을"},
+{t:"빛·연기 이펙트와 색 대비",pose:"{c}가 잔해 속에서 아이를 감싸 안고 몸을 낮춘 자세",alt:"잔해 너머에서 본",ref:"구조 장비와 불·연기 사진",cond:"판타지 세계의 구조대 복장",pc:"그을리고 험하게 쓴 모습",light:"불길의 주황빛과 연기 사이 푸른 밤빛"},
+{t:"캐릭터 설정화",pose:"{c}의 성격이 드러나는 대표 자세",alt:"3/4 정면",ref:"좋아하는 캐릭터 설정화 자료",cond:"{c}의 직업·성격·세계관이 한눈에 보이게",pc:"캐릭터를 상징하는 모습",light:"캐릭터를 가장 돋보이게 하는 빛"},
+{t:"삽화·표지 구도",pose:"{c}의 핵심 장면 자세",alt:"표지 비율(세로)에 맞춰 다른",ref:"좋아하는 웹소설 표지 자료",cond:"작품 분위기를 대표하는 의상",pc:"이야기의 핵심 단서가 되는 모습",light:"작품 분위기에 맞는 빛"},
+{t:"렌더링 마감과 포트폴리오",pose:"{c}와 {support}가 함께 있는 최종 장면 자세",alt:"표지 비율(세로)에 맞춰 다른",ref:"포트폴리오 대표작 자료",cond:"최종 대표 의상",pc:"가장 중요한 상징 모습",light:"최종 장면의 빛"}];
+const STY=[{n:"흑백 명도",col:"색은 한 겹만 쓴다. 새 레이어(오버레이나 곱하기)로 전체에 분위기 색 하나를 얹는다.",fin:"형태가 흐린 곳만 선을 정리하고, 가장 밝은 곳과 가장 어두운 곳을 한 번씩 더 강조해 마감한다."},
+{n:"게임풍 셀 명암",col:"부위별 밑색을 칠하고, 그림자를 경계가 딱 끊어지는 한 단계로 넣는다.",fin:"머리카락·금속·눈에 선명한 하이라이트를 넣고, 검은 선을 주변 색에 맞춘 색선으로 바꿔 마감한다."},
+{n:"파스텔 반무테",col:"밑색과 그림자를 넣은 뒤, 얼굴·천처럼 부드러운 곳의 그림자 경계를 흐리게 푼다.",fin:"선 색을 주변 색으로 바꾸고 윤곽 일부를 칠로 녹인 뒤, 빛 보정(발광 레이어나 뿌연 빛)을 한 겹 얹어 마감한다."},
+{n:"롤 원화 느낌 페인팅",col:"흑백 명도 위에 색을 얹고, 큰 붓으로 덩어리째 칠한다.",fin:"선을 칠로 덮고, 얼굴 같은 초점 부위만 가장자리를 날카롭게, 나머지는 붓자국을 남긴 채 마감한다."},
+{n:"나의 메인 스타일",col:"정한 메인 스타일의 순서대로 색을 올린다.",fin:"메인 스타일의 마감(선 처리·하이라이트·빛 보정)으로 완성한다."}];
+const styOf=pi=>STY[pi<3?0:pi<6?1:pi<9?2:pi<12?3:4];
+const bglOf=pi=>pi<3?"배경은 단색 바탕과 바닥 그림자, {scene}을 알려주는 소품 하나까지만 넣는다.":pi<6?"배경은 앞·중간·뒤 세 덩어리로 단순하게 잡는다.":pi<12?"눈높이 선과 투시를 잡고, 앞·중간·뒤 덩어리로 정리한다.":"투시와 빛까지 포함해 배경을 장면의 일부로 만든다.";
+const DTN=[["느낌 잡기","자료 만들기","마네킹","돌려 그리기","전신 러프","상대 인물","이달의 포즈"],["자료 모으기","분해하기","실루엣 5안","정면 디자인","옆·뒤 모습","소품 디자인","캐릭터 시트"],["배경 자료","명도 썸네일","눈높이와 구조","인물 배치","빛 정하기","배경 러프","최종 밑그림"],["팔레트","명도 칠하기","그림자와 반사광","색 올리기","디테일","마감","완성"]];
+const DWK=["포즈","의상·소품 디자인","배경","채색 완성"];
+const DT=[
+["이달 완성작에 쓸 포즈 '{pose}'의 느낌을 몸 전체를 관통하는 곡선 하나로 10번 긋고, 가장 살아 있는 3개에 머리·흉곽·골반을 얹어 작은 썸네일로 그린다.",
+"고른 포즈를 폰 타이머로 직접 찍거나 3D 포즈 앱으로 만들어 자료로 쓴다. 자료 위에 흉곽·골반 상자와 팔다리 원기둥을 덧그려 마네킹으로 옮긴다.",
+"자료를 보며 마네킹 전신을 그린 뒤, 자료를 가리고 한 번 더 그린다. 두 장을 비교해 틀린 곳에 표시한다.",
+"같은 포즈를 {alt} 각도로 돌려 마네킹으로 그린다. 3D 앱이 있으면 돌려서 확인한다.",
+"마네킹 위에 {c}의 몸과 머리를 얹어 전신 러프를 그린다. 손끝과 발끝 방향까지 정한다.",
+"{support}의 포즈도 곡선 → 자료 → 마네킹 순서로 잡아 {c} 옆에 배치한다.{male}",
+"이번 주 포즈 러프 중 가장 좋은 한 장을 골라 크게 다시 그려 '이달의 포즈'로 정한다."],
+["{ref} 자료 5장과 좋아하는 게임·일러스트 의상 5장을 모은다. 각 자료에서 마음에 드는 점을 한 줄씩 적고 사진을 올린다.",
+"모은 자료 3개를 실루엣·재질·장식 모티프로 나눠 적고, 소매·칼라·장식 같은 부분 스케치를 5개 그린다.",
+"조건 '{cond}'에 맞춰 {c}의 {outfit} 실루엣을 검은 덩어리로 5안 그린다.",
+"5안 중 하나를 골라 재질과 장식을 넣어 정면 전신 디자인을 그린다.",
+"고른 디자인의 옆모습과 뒷모습을 그리고, 당김·접힘·늘어짐 주름이 생기는 곳을 표시한다.",
+"{prop}을 조건 '{pc}'에 맞춰 실루엣 3안으로 그린 뒤, 하나를 골라 정면·측면·3/4 각도로 그린다.",
+"{prop}을 쥐거나 쓰는 손을 3가지 그리고, 의상과 소품을 캐릭터 시트 한 장으로 정리한다."],
+["{scene} 자료(사진·그림) 5장을 모아 각각 앞·중간·뒤 세 덩어리로 3분 썸네일을 그린다.",
+"{scene}을 흑·회·백 세 명도만으로 구도가 다른 썸네일 3개로 그린다. {bgl}",
+"눈높이 선을 정하고 {scene}의 구조를 러프로 그린다. 인물 머리가 눈높이 선과 어디서 만나는지 표시한다.",
+"이달의 포즈를 배경 썸네일에 넣어 인물 크기와 위치를 3안으로 바꿔 그린다.",
+"빛을 '{light}'로 정하고, 같은 구도를 빛 방향만 바꿔 2장 그려 하나를 고른다.",
+"고른 구도로 배경 러프를 크게 그린다. 뒤로 갈수록 흐리고 연하게, 앞은 진하고 또렷하게 그린다.",
+"인물과 배경을 합쳐 이달 완성작의 최종 밑그림을 그린다."],
+["이달 채색은 '{sty}'. 이 스타일로 된 좋아하는 그림 3장을 찾아 흑백으로 바꿔 보고, 쓰인 색을 5개씩 뽑아 팔레트를 만든다.",
+"밑그림 위에 흑·회·백 세 명도로 덩어리를 칠한다. 이 단계에서 그림이 읽히지 않으면 구도부터 고친다.",
+"빛 '{light}'을 기준으로 그림자 모양을 정리하고, 반사광을 한 군데 넣는다.",
+"{col}",
+"얼굴, 손, {prop} 세 곳을 가장 공들여 다듬는다. 나머지는 손대지 않는다.",
+"{fin}",
+"완성작을 손톱만 한 썸네일 크기로 줄여 읽히는지 확인하고 최종본으로 저장한다. 처음 러프와 나란히 놓고 달라진 점을 한 줄 적는다.{main}"]];
+const FUND2=[["구성 드릴: 사진 속 포즈를 2분 보고 그린 뒤, 사진을 가리고 다시 그려 비교하기를 5세트 한다.","남자 인체: 어깨·골반 너비, 목 굵기, 턱선, 손 크기를 비교하며 남자 전신 마네킹을 10개 그린다.","돌려 그리기: 3D 포즈 앱으로 한 포즈를 정면·옆·위·아래 네 각도로 돌려 가며 그린다."],
+["복식 스터디: {ref} 자료 한 벌을 목·소매·허리·밑단으로 나눠 따라 그린다.","소품 실루엣: 판타지 소품(무기·장신구·가방) 실루엣을 10개 빠르게 그린다.","손 스터디: 무언가를 쥔 손 사진 10장을 보고 상자로 단순화해 그린다."],
+["투시 상자: 눈높이를 바꿔 가며 상자 20개를 1·2점 투시로 그린다.","배경 명도 스터디: 좋아하는 배경 그림 2장을 흑·회·백 세 명도로 옮긴다.","거리별 인물: 투시선 위에 같은 키의 인물을 거리별로 3명 세워 그린다."],
+["명도 스터디: 좋아하는 반실사·원화 그림을 흑백으로 바꿔 명암 덩어리만 30분씩 2장 따라 칠한다.","재질 스터디: 금속·천·머리카락의 광택을 같은 빛 아래에서 작게 칠해 본다.","색 뽑기: 좋아하는 그림 2장에서 색 5개씩 뽑고 어디에 쓰였는지 표시한다."]];
+const SNAP=["30초 크로키: 남자 인물 사진 10장을 30초씩 선으로만 그린다.","30초 크로키: 여자 인물 사진 10장을 30초씩 선으로만 그린다.","손 크로키: 손 사진 8장을 1분씩 상자와 원기둥으로 그린다.","명도 썸네일: 좋아하는 그림 1장을 흑·회·백 세 덩어리로 2분 안에 옮긴다.","소품 실루엣: 이달 소품({prop})의 실루엣을 5개 빠르게 그린다.","배경 썸네일: 눈앞 풍경이나 사진 1장을 앞·중간·뒤 세 덩어리로 그린다.","색 뽑기: 좋아하는 그림 1장에서 색 5개를 뽑아 폰에 저장한다."];
+function drawFill(t,pi,P){const D=DRAW[pi],S=styOf(pi);
+ const male=D.nh?"":D.m?" 남자 인물은 어깨를 골반보다 확실히 넓게, 목은 굵게, 턱과 손은 각지고 크게 잡는다.":" 두 인물의 체형 차이(어깨·골반 너비, 목 굵기, 키)가 보이게 그린다.";
+ const main=pi===11?" 1년 동안 해본 네 가지 채색 중 가장 재밌고 잘 맞은 것을 2년차 메인 스타일로 정한다.":"";
+ t=t.replace(/\{pose\}/g,D.pose).replace(/\{alt\}/g,D.alt).replace(/\{ref\}/g,D.ref).replace(/\{cond\}/g,D.cond).replace(/\{pc\}/g,D.pc).replace(/\{light\}/g,D.light).replace(/\{sty\}/g,S.n).replace(/\{col\}/g,S.col).replace(/\{fin\}/g,S.fin).replace(/\{bgl\}/g,bglOf(pi)).replace(/\{male\}/g,male).replace(/\{main\}/g,main);
+ return fill(t,{...P,arc:""})}
+function writingPart(t){
+ [[/하나를 골라 완성하고, 그 구도에서 /,"두 사람이 "],[/그림에 들어갈 핵심 대사/,"장면의 핵심 대사"],[/짧게 쓰고, 실제 장면은 하나만 그린다/,"짧게 쓴다"],[/글 (\d+자 안팎)과 장면 러프 1장으로 정리한다/,"글 $1로 정리한다"],[/장면을 글 (\d+자 안팎)과 함께 그린다/,"장면을 $1로 쓴다"]].forEach(([a,b])=>{t=t.replace(a,b)});
+ const W=/쓴다|쓰고|문장|줄로|\d+자|대사/,Dr=/그림|그린|그려|러프|스케치|구도|배치|장면을 만든다|완성한다|전신|상반신|썸네일/;
+ let prev="w",lastD="";const keep=[];
+ (t.match(/[^.]+\./g)||[t]).forEach(x=>{x=x.trim();let k;
+  if(W.test(x)&&/(쓴다|정한다|수정한다|정리한다)\.$/.test(x))k="w";else if(Dr.test(x))k="d";else if(W.test(x))k="w";else k=prev;
+  if(k==="d")lastD=x;
+  else{if(prev==="d"&&!keep.length&&lastD&&!/선화|채색|명암|평면도|콘티|완성|최종/.test(lastD)&&(x.length<40||/^(그 |그것|각각|각 |두 |고른|합친|더 아픈|바뀐|3단계|처음과|역할|전과|대신)/.test(x)))
+    keep.push(lastD.replace(/(작은 러프로 |러프로 |썸네일로 |전신으로 |상반신 또는 전신으로 |두 장으로 |칠해 |완성해 |배경까지 )/g,"").replace(/러프를 /g,"").replace(/(그린다|그려 그린다)\.$/,"상상한다."));
+   keep.push(x)}
+  prev=k});
+ return keep.join(" ")}
+
+function applyMeta(){PROJECTS.forEach((p,i)=>{if(DRAW[i])p.skillDraw=DRAW[i].t});MISSIONS.forEach(m=>{if(m.base===undefined){m.base=m.taskSteps[0];m.microBase=m.micro}const P=PROJECTS[m.projectIndex],h=heavy.includes(new Date(m.date+"T12:00:00").getDay());
+ const legacy=m.projectIndex===0&&m.phaseIndex===0;let st;
+ if(legacy){st=[...(h?[m.base]:lightSteps(m.base))]}
+ else{const w=writingPart(m.base),k=m.dk===undefined?m.day-1:m.dk;st=[];if(w)st.push("글 파트: "+w);st.push(`그림 파트(${h?"집중일":"밤 2시간"}) · ${DWK[m.phaseIndex]}: `+drawFill(DT[m.phaseIndex][k],m.projectIndex,P));if(m.titleBase===undefined)m.titleBase=m.dayTitle;m.dayTitle=`${m.titleBase} / ${DTN[m.phaseIndex][k]}`}
+ st.push(`이달의 기술 연습(15분) · ${DRILL[m.day-1](P.skillDraw,P.skillWrite)}`);if(h)st.push(EXT);
+ if(h&&m.day>=5)st.push("기초 다지기(1시간): "+drawFill(legacy?FUND[0][m.day-5]:FUND2[m.phaseIndex][m.day-5],m.projectIndex,P));
  const D=DESIGN[m.projectIndex]&&m.phaseIndex===0&&DESIGN[m.projectIndex][m.day-1];if(D)st.push(D);st.push(...extras(m));
- m.taskSteps=st;m.micro=m.microBase+"　＋ 외형 연습(5~10분): "+fill(POOL[m.id%POOL.length],P.robot?{...P,c:P.support,outfit:"작업복",arc:""}:{...P,arc:""});m.meta=`${m.date} · ${h?"집중일 5~6시간":"밤 2시간 + 틈새 미션"}`})}
+ m.taskSteps=st;m.micro=m.microBase+"　＋ 짬 드로잉(15분): "+drawFill(SNAP[(m.day-1)%7],m.projectIndex,P);m.meta=`${m.date} · ${h?"집중일 5~6시간":"밤 2시간 + 틈새 미션"}`})}
 applyMeta();
 const KEY="studyPlannerDone", WRITE_KEY="studyPlannerWriting";
 let done={}, writing={};
